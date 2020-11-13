@@ -10,39 +10,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="51f583a5-08d8-449b-87b4-5c80edb9dff1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/lik.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/doc.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/item.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jquery.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lik.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likapi/doc.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likapi/drive.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likapi/http.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likapi/page.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likapi/request.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likapi/session.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likbase/base.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likbase/doc.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likbase/elm.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likbase/jsbase.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likbase/streem.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likbase/table.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likcom/commet.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likdom/doc.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likdom/dom.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likhid/hid.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likpdf/pdf.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/likpdf/text.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/list.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/log.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/marshal.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proc.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/set.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/xml.go" afterDir="false" />
-    </list>
+    <list default="true" id="51f583a5-08d8-449b-87b4-5c80edb9dff1" name="Default Changelist" comment="Start" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -62,7 +30,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../polyforum" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../proxy" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
@@ -78,12 +46,17 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Start" />
+    <option name="LAST_COMMIT_MESSAGE" value="Start" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="743" y="252" key="FileChooserDialogImpl" timestamp="1605264416183">
+    <state x="743" y="252" key="FileChooserDialogImpl" timestamp="1605268609671">
       <screen x="0" y="0" width="1920" height="1031" />
     </state>
-    <state x="743" y="252" key="FileChooserDialogImpl/0.0.1920.1031@0.0.1920.1031" timestamp="1605264416183" />
+    <state x="743" y="252" key="FileChooserDialogImpl/0.0.1920.1031@0.0.1920.1031" timestamp="1605268609671" />
     <state x="555" y="230" key="Vcs.Push.Dialog.v2" timestamp="1605264202444">
       <screen x="0" y="0" width="1920" height="1031" />
     </state>
