@@ -64,7 +64,7 @@ func RouteFile(w http.ResponseWriter, r *http.Request, name string) bool {
 		ok = true
 	} else if match := lik.RegExParse(name, "^js/(.*)$"); match != nil {
 		w.Header().Set("Cache-control", "private,no-cache,no-store,must-revalidate")
-		http.ServeFile(w, r, "../../shaman/lik/"+match[1])
+		http.ServeFile(w, r, "../lik/"+match[1])
 		ok = true
 	}
 	return ok
