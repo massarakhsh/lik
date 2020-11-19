@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/massarakhsh/lik"
 	"reflect"
+	"time"
 )
 
 //	Дескриптор базы данных
@@ -12,7 +13,9 @@ var ODB *gorm.DB
 
 //	Ядро объекта базы данных
 type One struct {
-	gorm.Model
+	Id        uint `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 //	Интерфейс объекта базы данных
@@ -38,7 +41,7 @@ func dbtable(one Oner) *gorm.DB {
 }
 
 func (it *One) GetId() lik.IDB {
-	return lik.IDB(it.ID)
+	return lik.IDB(it.Id)
 }
 
 //	Прочитать объект
