@@ -267,10 +267,28 @@ function lik_set_marshal(step, path) {
 	marshal_tick = tick_total + marshal_step;
 }
 
+/////////////////////////////////
+
 function lik_step_marshal() {
 	marshal_tick = tick_total + 10000;
 	if (marshal_path) {
-		json_call_part("GET", null, marshal_path, null, null);
+		let path = marshal_path;
+		let rdr = jQuery('[marshalAnker]');
+		let pairs = '';
+		if (rdr.size() > 0) {
+			rdr.each(function (idx, item) {
+				let elm = jQuery(item);
+				let anker = elm.attr('marshalAnker');
+				let index = elm.attr('marshalIndex');
+				if (pairs) pairs += "/";
+				pairs += anker + ":" + index;
+			});
+		}
+		if (pairs) {
+			path += (/\?/.exec(path)) ? '&' : '?';
+			path += 'marshal=' + pairs;
+		}
+		json_call_part("GET", null, path, null, null);
 	}
 }
 
@@ -281,6 +299,8 @@ function lik_next_marshal() {
 function lik_force_marshal() {
 	marshal_tick = tick_total;
 }
+
+////////////////////////////////////
 
 function lik_redraw() {
 	jQuery('[topart]').each(function(idx,item) {

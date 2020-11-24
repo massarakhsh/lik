@@ -228,6 +228,9 @@ func (dom *LikDom) ToString() string {
 func (dom *LikDom) ToPrefixString(prefix string) string {
 	code := ""
 	if dom.Tag != "" {
+		if prefix == "" && dom.Tag == "html" {
+			code += "<!DOCTYPE html>\n"
+		}
 		tag := dom.Tag
 		tags := tag
 		if dom.Text != "" {
