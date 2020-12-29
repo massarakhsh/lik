@@ -22,6 +22,7 @@ type DBField struct {
 }
 
 type DBaser interface {
+	Close()
 	PrepareSql(what string, from string, where string, order string, limit ...int) string
 	ControlTable(table string, fields []DBField) bool
 	DropTable(table string)
@@ -75,6 +76,13 @@ func (dbs *DBase) openDBase(driver string, logon string, connect string, dbname 
 	}
 	dbs.DB = db
 	return true
+}
+
+func (dbs *DBase) Close() {
+	if dbs.DB != nil {
+		_  = dbs.DB.Close()
+		dbs.DB = nil
+	}
 }
 
 func StrToIDB(str string) lik.IDB {
