@@ -110,13 +110,18 @@ func RouteCsv(w http.ResponseWriter, rc int, content lik.Lister, dlm string) {
 func RouteJson(w http.ResponseWriter, rc int, content lik.Seter, format bool) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("Cache-control", "private, max-age=0, no-cache")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(rc)
 	if content == nil {
 		fmt.Fprint(w, "{}")
 	} else if format {
-		fmt.Fprint(w, content.Format(""))
+		serial := content.Format("")
+		//fmt.Printf("JSON format length: %d\n", len(serial))
+		fmt.Fprint(w, serial)
 	} else {
-		fmt.Fprint(w, content.Serialize())
+		serial := content.Serialize()
+		//fmt.Printf("JSON length: %d\n", len(serial))
+		fmt.Fprint(w, serial)
 	}
 }
 

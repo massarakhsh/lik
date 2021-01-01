@@ -367,20 +367,26 @@ function post_data_proc(part,data,proc,parm) {
 }
 
 function json_call_part(type, data, part, proc, parm) {
-    jQuery.ajax({
-        type: type,
-        url: lik_build_url(part),
-        data: data,
+	json_call_url(type, data, lik_build_url(part), proc, parm, part == marshal_path);
+}
+
+function json_call_url(type, data, url, proc, parm, ismarshal) {
+	jQuery.ajax({
+		type: type,
+		url: url,
+		data: data,
 		dataType: "json",
-        success: function(code) {
-        	if (part == marshal_path) lik_next_marshal();
+		crossDomain: true,
+		timeout: 10000,
+		success: function(code) {
+			if (ismarshal) lik_next_marshal();
 			json_answer_part(code, proc, parm);
-        },
+		},
 		error: function(xhr, status) {
-			if (part == marshal_path) lik_next_marshal();
+			if (ismarshal) lik_next_marshal();
 			json_answer_part(undefined, proc, parm);
 		}
-    });
+	});
 }
 
 function json_answer_part(lika, proc, parm) {
