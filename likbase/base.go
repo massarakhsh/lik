@@ -430,7 +430,11 @@ func (dbs *DBase) updateTableElm(table string, id lik.IDB, sets lik.Seter) lik.I
 				if cmd != "" {
 					cmd += ","
 				}
-				cmd += fmt.Sprintf("`%s`=%s", key, lik.StrToQuotes(vals))
+				if vals == "CURRENT_TIMESTAMP" {
+					cmd += fmt.Sprintf("`%s`=%s", key, vals)
+				} else {
+					cmd += fmt.Sprintf("`%s`=%s", key, lik.StrToQuotes(vals))
+				}
 			}
 		}
 	}

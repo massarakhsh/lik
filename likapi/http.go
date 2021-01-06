@@ -107,20 +107,24 @@ func RouteCsv(w http.ResponseWriter, rc int, content lik.Lister, dlm string) {
 	}
 }
 
-func RouteJson(w http.ResponseWriter, rc int, content lik.Seter, format bool) {
+//func RouteJson(w http.ResponseWriter, rc int, content lik.Seter, format bool) {
+func RouteJson(w http.ResponseWriter, content lik.Seter, opts ...interface{}) {
+	options := lik.BuildSet(opts...)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("Cache-control", "private, max-age=0, no-cache")
-	//w.Header().Set("Access-Control-Allow-Origin", "*")
+	if relay := options.GetString("relay"); relay != "" {
+		w.Header().Set("Access-Control-Allow-Origin", relay)
+	}
+	rc := options.GetInt("rc")
+	if rc == 0 { rc = 200 }
 	w.WriteHeader(rc)
 	if content == nil {
 		fmt.Fprint(w, "{}")
-	} else if format {
+	} else if options.GetBool("format") {
 		serial := content.Format("")
-		//fmt.Printf("JSON format length: %d\n", len(serial))
 		fmt.Fprint(w, serial)
 	} else {
 		serial := content.Serialize()
-		//fmt.Printf("JSON length: %d\n", len(serial))
 		fmt.Fprint(w, serial)
 	}
 }
