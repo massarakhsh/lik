@@ -5,18 +5,31 @@ let likRefTick = null;
 function lik_ref_initialize() {
     likRefRegister = {};
     likRefIndex = 0;
-    requestUpdate();
+    lik_ref_request();
     if (!likRefTick) {
-        likRefTick = setInterval(requestUpdate, 10000);
+        likRefTick = setInterval(lik_ref_request, 10000);
     }
 }
 
-function requestUpdate() {
-    //get_data_proc('/api/marshal/' + dataIndex, makeUpdate, null);
-    get_data_proc('http://localhost:8090/api/marshal/' + likRefIndex, makeUpdate, null);
+function lik_ref_request() {
+    lik_ref_call("GET", null, 'http://localhost:8090/api/marshal/' + likRefIndex);
 }
 
-function makeUpdate(parm, lika) {
+function lik_ref_call(type, data, url) {
+    jQuery.ajax({
+        type: type,
+        url: url,
+        data: data,
+        dataType: "json",
+        crossDomain: true,
+        timeout: 10000,
+        success: function(code) {
+            lik_ref_update(code);
+        }
+    });
+}
+
+function lik_ref_update(lika) {
     if (lika) {
         for (var key in lika) {
             if (key == 'index') {
@@ -44,7 +57,7 @@ function makeUpdate(parm, lika) {
     }
 }
 
-function getRegister(path) {
+function lik_ref_get(path) {
     let names = path.split('/');
     let loc = likRefRegister;
     for (let p = 0; p < names.length; p++) {
