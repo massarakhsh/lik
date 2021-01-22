@@ -1,3 +1,4 @@
+const likRefUrl = 'http://192.168.234.62:8090/api';
 const likRefId = 'SysNum';
 let likRefRegister = {};
 let likRefTick = null;
@@ -54,7 +55,7 @@ function _lik_ref_request_all() {
 }
 
 function _lik_ref_request_table(table, index) {
-    let url = 'http://localhost:8090/api/' + table + '/' + index;
+    let url = likRefUrl + '/' + table + '/' + index;
     jQuery.ajax({
         type: 'GET',
         url: url,
@@ -97,6 +98,24 @@ function likref_get_all(table, callback) {
 function likref_get_sys(table, sys, callback) {
     likref_get_all(table, (elms) => {
         callback(elms[sys]);
+    });
+}
+
+function likref_get_keyval(table, key, val, callback) {
+    likref_get_all(table, (elms) => {
+        let list = [];
+        if (elms) {
+            for (var sys in elms) {
+                let elm = elms[sys];
+                if (!elm) {
+                } else if (!key) {
+                    list.push(elm);
+                } else if (elm[key] == val) {
+                    list.push(elm);
+                }
+            }
+        }
+        callback(list);
     });
 }
 
