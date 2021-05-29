@@ -30,7 +30,7 @@ type Seter interface {
 
 func BuildSet(vals ...interface{}) Seter {
 	itemap := &DItemSet{}
-	itemap.SetValues(vals)
+	itemap.SetValues(vals...)
 	return itemap
 }
 
