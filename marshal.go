@@ -46,7 +46,7 @@ func SetFromRequest(data string) Seter {
 		for _, word := range words {
 			if peq := strings.Index(word, "="); peq > 0 {
 				key := word[0:peq]
-				val := word[peq+1 : len(word)]
+				val := word[peq+1:]
 				pars := buildParse(val)
 				item := pars.scanItValue()
 				if key != "" {
