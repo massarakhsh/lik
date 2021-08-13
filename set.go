@@ -20,6 +20,7 @@ type Seter interface {
 	GetIDB(path string) IDB
 	DelItem(path string) bool
 	SetItem(val interface{}, path string) bool
+	SetValues(vals... interface{})
 	DelPos(pos int) bool
 	ToJson() string
 	Values() []SetElm
@@ -29,6 +30,11 @@ type Seter interface {
 
 func BuildSet(vals ...interface{}) Seter {
 	itemap := &DItemSet{}
+	itemap.SetValues(vals...)
+	return itemap
+}
+
+func (it *DItemSet) SetValues(vals... interface{}) {
 	for nv := 0; nv < len(vals); nv++ {
 		vk := vals[nv]
 		switch key := vk.(type) {
@@ -38,23 +44,22 @@ func BuildSet(vals ...interface{}) Seter {
 				val := match[2]
 				val = strings.Trim(val, "'\"")
 				if ival, ok := StrToIntIf(val); ok {
-					itemap.SetItem(ival, key)
+					it.SetItem(ival, key)
 				} else if fval, ok := StrToFloatIf(val); ok {
-					itemap.SetItem(fval, key)
+					it.SetItem(fval, key)
 				} else if val == "true" {
-					itemap.SetItem(true, key)
+					it.SetItem(true, key)
 				} else if val == "false" {
-					itemap.SetItem(false, key)
+					it.SetItem(false, key)
 				} else {
-					itemap.SetItem(val, key)
+					it.SetItem(val, key)
 				}
 			} else if len(key) > 0 && nv+1 < len(vals) {
 				nv++
-				itemap.SetItem(vals[nv], key)
+				it.SetItem(vals[nv], key)
 			}
 		}
 	}
-	return itemap
 }
 
 func (it *DItemSet) clone() Itemer {
