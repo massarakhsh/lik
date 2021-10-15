@@ -135,7 +135,7 @@ func (dom *LikDom) IsAttr(key string) bool {
 }
 
 func (dom *LikDom) GetAttr(key string) string {
-	val, _ := dom.Attr[key]
+	val := dom.Attr[key]
 	return val
 }
 
@@ -222,7 +222,44 @@ func (dom *LikDom) GetDataTag(tag string) (Domer, bool) {
 }
 
 func (dom *LikDom) ToString() string {
-	return dom.ToPrefixString("")
+	code := ""
+	if dom.Tag != "" {
+		if dom.Tag == "html" {
+			code += "<!DOCTYPE html>\n"
+		}
+		tag := dom.Tag
+		tags := tag
+		if dom.Text != "" {
+			tags += " " + dom.Text
+		}
+		for key, val := range dom.Attr {
+			tags += " " + key
+			if val != "" {
+				qval := strings.Replace(val, "\\", "\\\\", -1)
+				qval = strings.Replace(qval, "\"", "\\\"", -1)
+				qval = strings.Replace(qval, "\n", "\\n", -1)
+				tags += "=\"" + qval + "\""
+			}
+		}
+		code += "<" + tags + ">"
+		if !dom.Unpair {
+			for _, item := range dom.Data {
+				if item != nil {
+					code += item.ToString()
+				}
+			}
+			code += "</" + tag + ">"
+		}
+	} else if dom.Text != "" {
+		code += dom.Text
+	} else {
+		for _, item := range dom.Data {
+			if item != nil {
+				code += item.ToString()
+			}
+		}
+	}
+	return code
 }
 
 func (dom *LikDom) ToPrefixString(prefix string) string {
