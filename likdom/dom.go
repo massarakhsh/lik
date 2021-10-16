@@ -233,7 +233,8 @@ func (dom *LikDom) ToString() string {
 			tags += " " + dom.Text
 		}
 		for key, val := range dom.Attr {
-			tags += " " + key
+			tags += " "
+			tags += key
 			if val != "" {
 				qval := strings.Replace(val, "\\", "\\\\", -1)
 				qval = strings.Replace(qval, "\"", "\\\"", -1)
