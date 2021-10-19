@@ -20,7 +20,9 @@ type Seter interface {
 	GetIDB(path string) IDB
 	DelItem(path string) bool
 	SetItem(val interface{}, path string) bool
-	SetValues(vals... interface{})
+	SetValues(vals ...interface{})
+	AddSet(path string) Seter
+	AddList(path string) Lister
 	DelPos(pos int) bool
 	ToJson() string
 	Values() []SetElm
@@ -34,7 +36,7 @@ func BuildSet(vals ...interface{}) Seter {
 	return itemap
 }
 
-func (it *DItemSet) SetValues(vals... interface{}) {
+func (it *DItemSet) SetValues(vals ...interface{}) {
 	for nv := 0; nv < len(vals); nv++ {
 		vk := vals[nv]
 		switch key := vk.(type) {
@@ -268,6 +270,18 @@ func (it *DItemSet) SetItem(val interface{}, path string) bool {
 		}
 	}
 	return modify
+}
+
+func (it *DItemSet) AddSet(path string) Seter {
+	item := BuildSet()
+	it.SetItem(item, path)
+	return item
+}
+
+func (it *DItemSet) AddList(path string) Lister {
+	item := BuildList()
+	it.SetItem(item, path)
+	return item
 }
 
 func (it *DItemSet) Values() []SetElm {
