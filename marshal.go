@@ -36,7 +36,7 @@ func StrToQuotes(str string) string {
 
 func SetFromRequest(data string) Seter {
 	result := BuildSet()
-	data = strings.Trim(data, " \n\t")
+	data = strings.Trim(data, " \n\r\t")
 	if data == "" {
 	} else if strings.HasPrefix(data, "{") {
 		pars := buildParse(data)
@@ -60,7 +60,7 @@ func SetFromRequest(data string) Seter {
 
 func ListFromRequest(data string) Lister {
 	result := BuildList()
-	data = strings.Trim(data, " \n\t")
+	data = strings.Trim(data, " \n\r\t")
 	if data == "" {
 	} else if strings.HasPrefix(data, "[") {
 		pars := buildParse(data)
