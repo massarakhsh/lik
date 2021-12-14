@@ -36,7 +36,7 @@ func StrToQuotes(str string) string {
 
 func SetFromRequest(data string) Seter {
 	result := BuildSet()
-	data = strings.Trim(data, " \n\r\t")
+	data = strings.Trim(data, " \n\r\t\b")
 	if data == "" {
 	} else if strings.HasPrefix(data, "{") {
 		pars := buildParse(data)
