@@ -36,6 +36,14 @@ func BuildSet(vals ...interface{}) Seter {
 	return itemap
 }
 
+func BuildStringSet(vals ...string) Seter {
+	var opts []interface{}
+	for _, val := range vals {
+		opts = append(opts, val)
+	}
+	return BuildSet(opts...)
+}
+
 func (it *DItemSet) SetValues(vals ...interface{}) {
 	for nv := 0; nv < len(vals); nv++ {
 		vk := vals[nv]
