@@ -1,8 +1,9 @@
 package likbase
 
 import (
-	"github.com/massarakhsh/lik"
 	"time"
+
+	"github.com/massarakhsh/lik"
 )
 
 type ItElm struct {
@@ -149,7 +150,7 @@ func (elm *ItElm) GetInt(path string) int {
 	value := 0
 	if elm != nil {
 		if item := elm.GetItem(path); item != nil {
-			value = item.ToInt()
+			value = int(item.ToInt())
 		}
 	}
 	return value

@@ -6,7 +6,7 @@ type Lister interface {
 	Count() int
 	GetItem(idx int) Itemer
 	GetBool(idx int) bool
-	GetInt(idx int) int
+	GetInt(idx int) int64
 	GetFloat(idx int) float64
 	GetString(idx int) string
 	GetList(idx int) Lister
@@ -97,7 +97,7 @@ func (it *DItemList) GetBool(idx int) bool {
 	return false
 }
 
-func (it *DItemList) GetInt(idx int) int {
+func (it *DItemList) GetInt(idx int) int64 {
 	if item := it.GetItem(idx); item != nil {
 		return item.ToInt()
 	}

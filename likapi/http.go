@@ -115,8 +115,10 @@ func RouteJson(w http.ResponseWriter, content lik.Seter, opts ...interface{}) {
 	if relay := options.GetString("relay"); relay != "" {
 		w.Header().Set("Access-Control-Allow-Origin", relay)
 	}
-	rc := options.GetInt("rc")
-	if rc == 0 { rc = 200 }
+	rc := int(options.GetInt("rc"))
+	if rc == 0 {
+		rc = 200
+	}
 	w.WriteHeader(rc)
 	if content == nil {
 		fmt.Fprint(w, "{}")

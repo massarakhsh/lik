@@ -93,7 +93,7 @@ func (pars *JsonParse) scanItValue() Itemer {
 			return &DItemBool{true}
 		} else if str == "false" || str == "FALSE" {
 			return &DItemBool{false}
-		} else if ival, ok := StrToIntIf(str); ok {
+		} else if ival, ok := StrToInt64If(str); ok {
 			return &DItemInt{ival}
 		} else if fval, ok := StrToFloatIf(str); ok {
 			return &DItemFloat{fval}

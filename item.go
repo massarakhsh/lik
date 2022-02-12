@@ -17,7 +17,7 @@ type Itemer interface {
 	IsList() bool
 	IsSet() bool
 	ToBool() bool
-	ToInt() int
+	ToInt() int64
 	ToFloat() float64
 	ToString() string
 	ToList() Lister
@@ -32,7 +32,7 @@ type DItemBool struct {
 }
 
 type DItemInt struct {
-	Val int
+	Val int64
 }
 
 type DItemFloat struct {
@@ -70,17 +70,17 @@ func BuildItem(data interface{}) Itemer {
 	case *DItemBool:
 		item = &DItemBool{val.Val}
 	case int:
-		item = &DItemInt{val}
+		item = &DItemInt{int64(val)}
 	case uint:
-		item = &DItemInt{int(val)}
+		item = &DItemInt{int64(val)}
 	case int32:
-		item = &DItemInt{int(val)}
+		item = &DItemInt{int64(val)}
 	case uint32:
-		item = &DItemInt{int(val)}
+		item = &DItemInt{int64(val)}
 	case int64:
-		item = &DItemInt{int(val)}
+		item = &DItemInt{int64(val)}
 	case IDB:
-		item = &DItemInt{int(val)}
+		item = &DItemInt{int64(val)}
 	case DItemInt:
 		item = &DItemInt{val.Val}
 	case *DItemInt:
@@ -262,26 +262,26 @@ func (it *DItemSet) ToBool() bool {
 	return false
 }
 
-func (it *DItemBool) ToInt() int {
+func (it *DItemBool) ToInt() int64 {
 	if it.Val {
 		return 1
 	} else {
 		return 0
 	}
 }
-func (it *DItemInt) ToInt() int {
+func (it *DItemInt) ToInt() int64 {
 	return it.Val
 }
-func (it *DItemFloat) ToInt() int {
-	return int(math.Round(it.Val))
+func (it *DItemFloat) ToInt() int64 {
+	return int64(math.Round(it.Val))
 }
-func (it *DItemString) ToInt() int {
-	return StrToInt(it.Val)
+func (it *DItemString) ToInt() int64 {
+	return StrToInt64(it.Val)
 }
-func (it *DItemList) ToInt() int {
+func (it *DItemList) ToInt() int64 {
 	return 0
 }
-func (it *DItemSet) ToInt() int {
+func (it *DItemSet) ToInt() int64 {
 	return 0
 }
 

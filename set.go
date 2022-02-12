@@ -12,7 +12,7 @@ type Seter interface {
 	IsItem(path string) bool
 	GetItem(path string) Itemer
 	GetBool(path string) bool
-	GetInt(path string) int
+	GetInt(path string) int64
 	GetFloat(path string) float64
 	GetString(path string) string
 	GetList(path string) Lister
@@ -171,7 +171,7 @@ func (it *DItemSet) GetBool(path string) bool {
 	return false
 }
 
-func (it *DItemSet) GetInt(path string) int {
+func (it *DItemSet) GetInt(path string) int64 {
 	if item := it.GetItem(path); item != nil {
 		return item.ToInt()
 	}

@@ -63,6 +63,18 @@ func StrToInt(str string) int {
 	}
 	return 0
 }
+func StrToInt64If(str string) (int64, bool) {
+	if val, err := strconv.ParseInt(str, 10, 64); err == nil {
+		return val, true
+	}
+	return 0, false
+}
+func StrToInt64(str string) int64 {
+	if val, ok := StrToInt64If(str); ok {
+		return val
+	}
+	return 0
+}
 func StrToIDB(str string) IDB {
 	return IDB(StrToInt(str))
 }
