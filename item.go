@@ -110,7 +110,13 @@ func BuildItem(data interface{}) Itemer {
 	case Seter:
 		item = val
 	default:
-		fmt.Println("BuildItem ERROR: ", data)
+		if _, ok := data.(int); ok {
+			item = &DItemInt{data.(int64)}
+		} else if _, ok := data.(int); ok {
+			item = &DItemInt{data.(int64)}
+		} else {
+			fmt.Println("BuildItem ERROR: ", data)
+		}
 	}
 	return item
 }
