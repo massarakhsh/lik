@@ -112,12 +112,14 @@ func BuildItem(data interface{}) Itemer {
 	default:
 		if _, ok := data.(int); ok {
 			item = &DItemInt{data.(int64)}
-		} else if _, ok := data.(int); ok {
+		} else if _, ok := data.(int64); ok {
 			item = &DItemInt{data.(int64)}
 		} else if _, ok := data.(float32); ok {
 			item = &DItemFloat{data.(float64)}
 		} else if _, ok := data.(float64); ok {
 			item = &DItemFloat{data.(float64)}
+		} else if _, ok := data.(string); ok {
+			item = &DItemString{data.(string)}
 		} else {
 			fmt.Println("BuildItem ERROR: ", data)
 		}
