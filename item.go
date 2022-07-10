@@ -64,36 +64,18 @@ type SetElm struct {
 func BuildItem(data interface{}) Itemer {
 	var item Itemer
 	switch val := data.(type) {
-	case bool:
-		item = &DItemBool{val}
 	case DItemBool:
 		item = &DItemBool{val.Val}
 	case *DItemBool:
 		item = &DItemBool{val.Val}
-	case int:
-		item = &DItemInt{int64(val)}
-	case uint:
-		item = &DItemInt{int64(val)}
-	case int32:
-		item = &DItemInt{int64(val)}
-	case uint32:
-		item = &DItemInt{int64(val)}
-	case int64:
-		item = &DItemInt{int64(val)}
-	case IDB:
-		item = &DItemInt{int64(val)}
 	case DItemInt:
 		item = &DItemInt{val.Val}
 	case *DItemInt:
 		item = &DItemInt{val.Val}
-	case float64:
-		item = &DItemFloat{val}
 	case DItemFloat:
 		item = &DItemFloat{val.Val}
 	case *DItemFloat:
 		item = &DItemFloat{val.Val}
-	case string:
-		item = &DItemString{val}
 	case DItemString:
 		item = &DItemString{val.Val}
 	case *DItemString:
@@ -112,22 +94,23 @@ func BuildItem(data interface{}) Itemer {
 		item = val
 	default:
 		tp := reflect.TypeOf(data).Kind().String()
-		if tp == "int" {
-			item = &DItemInt{data.(int64)}
+		vl := reflect.ValueOf(data)
+		if tp == "bool" {
+			item = &DItemBool{vl.Bool()}
+		} else if tp == "int" {
+			item = &DItemInt{vl.Int()}
 		} else if tp == "int64" {
-			item = &DItemInt{data.(int64)}
+			item = &DItemInt{vl.Int()}
+		} else if tp == "uint" {
+			item = &DItemInt{vl.Int()}
+		} else if tp == "uint64" {
+			item = &DItemInt{vl.Int()}
+		} else if tp == "float32" {
+			item = &DItemFloat{vl.Float()}
+		} else if tp == "float64" {
+			item = &DItemFloat{vl.Float()}
 		} else if tp == "string" {
-			item = &DItemString{data.(string)}
-		} else if _, ok := data.(int); ok {
-			item = &DItemInt{data.(int64)}
-		} else if _, ok := data.(int64); ok {
-			item = &DItemInt{data.(int64)}
-		} else if _, ok := data.(float32); ok {
-			item = &DItemFloat{data.(float64)}
-		} else if _, ok := data.(float64); ok {
-			item = &DItemFloat{data.(float64)}
-		} else if _, ok := data.(string); ok {
-			item = &DItemString{data.(string)}
+			item = &DItemString{vl.String()}
 		} else {
 			fmt.Println("BuildItem ERROR: ", data)
 		}
