@@ -116,6 +116,8 @@ func BuildItem(data interface{}) Itemer {
 			item = &DItemInt{data.(int64)}
 		} else if tp == "int64" {
 			item = &DItemInt{data.(int64)}
+		} else if tp == "string" {
+			item = &DItemString{data.(string)}
 		} else if _, ok := data.(int); ok {
 			item = &DItemInt{data.(int64)}
 		} else if _, ok := data.(int64); ok {
