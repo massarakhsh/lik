@@ -112,7 +112,9 @@ func BuildItem(data interface{}) Itemer {
 		item = val
 	default:
 		tp := reflect.TypeOf(data).Kind().String()
-		if tp == "int64" {
+		if tp == "int" {
+			item = &DItemInt{data.(int64)}
+		} else if tp == "int64" {
 			item = &DItemInt{data.(int64)}
 		} else if _, ok := data.(int); ok {
 			item = &DItemInt{data.(int64)}
