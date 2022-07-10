@@ -3,6 +3,7 @@ package lik
 import (
 	"fmt"
 	"math"
+	"reflect"
 	"strings"
 )
 
@@ -110,7 +111,10 @@ func BuildItem(data interface{}) Itemer {
 	case Seter:
 		item = val
 	default:
-		if _, ok := data.(int); ok {
+		tp := reflect.TypeOf(data).Kind().String()
+		if tp == "int64" {
+			item = &DItemInt{data.(int64)}
+		} else if _, ok := data.(int); ok {
 			item = &DItemInt{data.(int64)}
 		} else if _, ok := data.(int64); ok {
 			item = &DItemInt{data.(int64)}
