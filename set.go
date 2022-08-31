@@ -28,6 +28,7 @@ type Seter interface {
 	Values() []SetElm
 	Keys() []string
 	Self() *DItemSet
+	SetFromString(val string, key string)
 }
 
 func BuildSet(vals ...interface{}) Seter {
@@ -306,4 +307,18 @@ func (it *DItemSet) Keys() []string {
 		keys = append(keys, it.Val[ns].Key)
 	}
 	return keys
+}
+
+func (it *DItemSet) SetFromString(val string, key string) {
+	if val == "true" {
+		it.SetItem(true, key)
+	} else if val == "false" {
+		it.SetItem(false, key)
+	} else if num, ok := StrToIntIf(val); ok {
+		it.SetItem(num, key)
+	} else if num, ok := StrToFloatIf(val); ok {
+		it.SetItem(num, key)
+	} else {
+		it.SetItem(val, key)
+	}
 }
