@@ -1,6 +1,7 @@
 package lik
 
 import (
+	"sort"
 	"strings"
 )
 
@@ -28,6 +29,7 @@ type Seter interface {
 	ToJson() string
 	Values() []SetElm
 	Keys() []string
+	SortKeys() []string
 	Self() *DItemSet
 	SetFromString(val string, key string)
 }
@@ -307,6 +309,12 @@ func (it *DItemSet) Keys() []string {
 	for ns := 0; ns < len(it.Val); ns++ {
 		keys = append(keys, it.Val[ns].Key)
 	}
+	return keys
+}
+
+func (it *DItemSet) SortKeys() []string {
+	keys := it.Keys()
+	sort.SliceStable(keys, func(i, j int) bool { return keys[i] < keys[j] })
 	return keys
 }
 
