@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-//	Интерфейс динамических структур
+// Интерфейс динамических структур
 type Seter interface {
 	Itemer
 	Count() int
@@ -24,6 +24,7 @@ type Seter interface {
 	AddSet(path string) Seter
 	AddList(path string) Lister
 	DelPos(pos int) bool
+	Merge(set Seter)
 	ToJson() string
 	Values() []SetElm
 	Keys() []string
@@ -320,5 +321,21 @@ func (it *DItemSet) SetFromString(val string, key string) {
 		it.SetItem(num, key)
 	} else {
 		it.SetItem(val, key)
+	}
+}
+
+func (it *DItemSet) Merge(set Seter) {
+	if set != nil {
+		for _, pair := range set.Values() {
+			if val := pair.Val; val.IsSet() {
+				if to := it.GetSet(pair.Key); to != nil {
+					to.Merge(val.ToSet())
+				} else {
+					it.SetItem(val, pair.Key)
+				}
+			} else {
+				it.SetItem(val, pair.Key)
+			}
+		}
 	}
 }
