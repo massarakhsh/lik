@@ -75,6 +75,29 @@ func StrToInt64(str string) int64 {
 	}
 	return 0
 }
+
+func HexToInt64(str string) int64 {
+	if val, ok := HexToInt64If(str); ok {
+		return val
+	}
+	return 0
+}
+func HexToInt64If(str string) (int64, bool) {
+	result := int64(0)
+	for n := 0; n < len(str); n++ {
+		if ch := str[n]; ch >= '0' && ch <= '9' {
+			result = result*16 + int64(ch-'0')
+		} else if ch >= 'a' && ch <= 'z' {
+			result = result*16 + 10 + int64(ch-'a')
+		} else if ch >= 'A' && ch <= 'Z' {
+			result = result*16 + 10 + int64(ch-'A')
+		} else {
+			return 0, false
+		}
+	}
+	return result, true
+}
+
 func StrToIDB(str string) IDB {
 	return IDB(StrToInt(str))
 }
