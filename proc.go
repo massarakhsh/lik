@@ -52,10 +52,11 @@ func GetArgs(args []string) (Seter, bool) {
 }
 
 func StrToIntIf(str string) (int, bool) {
-	if val, err := strconv.ParseInt(str, 10, 64); err == nil {
-		return int(val), true
+	val, ok := 0, false
+	if vl, err := strconv.ParseInt(str, 0, 32); err == nil {
+		val, ok = int(vl), true
 	}
-	return 0, false
+	return val, ok
 }
 func StrToInt(str string) int {
 	if val, ok := StrToIntIf(str); ok {
@@ -64,38 +65,17 @@ func StrToInt(str string) int {
 	return 0
 }
 func StrToInt64If(str string) (int64, bool) {
-	if val, err := strconv.ParseInt(str, 10, 64); err == nil {
-		return val, true
+	val, ok := int64(0), false
+	if vl, err := strconv.ParseInt(str, 0, 64); err == nil {
+		val, ok = vl, true
 	}
-	return 0, false
+	return val, ok
 }
 func StrToInt64(str string) int64 {
 	if val, ok := StrToInt64If(str); ok {
 		return val
 	}
 	return 0
-}
-
-func HexToInt64(str string) int64 {
-	if val, ok := HexToInt64If(str); ok {
-		return val
-	}
-	return 0
-}
-func HexToInt64If(str string) (int64, bool) {
-	result := int64(0)
-	for n := 0; n < len(str); n++ {
-		if ch := str[n]; ch >= '0' && ch <= '9' {
-			result = result*16 + int64(ch-'0')
-		} else if ch >= 'a' && ch <= 'z' {
-			result = result*16 + 10 + int64(ch-'a')
-		} else if ch >= 'A' && ch <= 'Z' {
-			result = result*16 + 10 + int64(ch-'A')
-		} else {
-			return 0, false
-		}
-	}
-	return result, true
 }
 
 func StrToIDB(str string) IDB {

@@ -97,12 +97,6 @@ func (pars *JsonParse) scanItValue() Itemer {
 			return &DItemInt{ival}
 		} else if fval, ok := StrToFloatIf(str); ok {
 			return &DItemFloat{fval}
-		} else if match := RegExParse(str, "^0x(.+)"); match != nil {
-			if n, ok := HexToInt64If(match[1]); ok {
-				return &DItemInt{n}
-			} else {
-				return &DItemString{str}
-			}
 		} else {
 			return &DItemString{str}
 		}
