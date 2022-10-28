@@ -9,7 +9,7 @@ import (
 
 type IDB int
 
-//	Базовый интерфейс динамических элементов
+// Базовый интерфейс динамических элементов
 type Itemer interface {
 	IsBool() bool
 	IsInt() bool
@@ -59,8 +59,8 @@ type SetElm struct {
 
 // Interface Itemer
 
-//	Создание динамического элемента из параметра
-//	Тип элемента определяется типом параметра
+// Создание динамического элемента из параметра
+// Тип элемента определяется типом параметра
 func BuildItem(data interface{}) Itemer {
 	var item Itemer
 	switch val := data.(type) {
@@ -99,9 +99,13 @@ func BuildItem(data interface{}) Itemer {
 			item = &DItemBool{vl.Bool()}
 		} else if tp == "int" {
 			item = &DItemInt{vl.Int()}
+		} else if tp == "int32" {
+			item = &DItemInt{vl.Int()}
 		} else if tp == "int64" {
 			item = &DItemInt{vl.Int()}
 		} else if tp == "uint" {
+			item = &DItemInt{vl.Int()}
+		} else if tp == "uint32" {
 			item = &DItemInt{vl.Int()}
 		} else if tp == "uint64" {
 			item = &DItemInt{vl.Int()}
