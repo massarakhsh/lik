@@ -52,10 +52,11 @@ func GetArgs(args []string) (Seter, bool) {
 }
 
 func StrToIntIf(str string) (int, bool) {
-	if val, err := strconv.ParseInt(str, 10, 64); err == nil {
-		return int(val), true
+	val, ok := 0, false
+	if vl, err := strconv.ParseInt(str, 0, 32); err == nil {
+		val, ok = int(vl), true
 	}
-	return 0, false
+	return val, ok
 }
 func StrToInt(str string) int {
 	if val, ok := StrToIntIf(str); ok {
@@ -64,10 +65,11 @@ func StrToInt(str string) int {
 	return 0
 }
 func StrToInt64If(str string) (int64, bool) {
-	if val, err := strconv.ParseInt(str, 10, 64); err == nil {
-		return val, true
+	val, ok := int64(0), false
+	if vl, err := strconv.ParseInt(str, 0, 64); err == nil {
+		val, ok = vl, true
 	}
-	return 0, false
+	return val, ok
 }
 func StrToInt64(str string) int64 {
 	if val, ok := StrToInt64If(str); ok {
@@ -75,6 +77,7 @@ func StrToInt64(str string) int64 {
 	}
 	return 0
 }
+
 func StrToIDB(str string) IDB {
 	return IDB(StrToInt(str))
 }
