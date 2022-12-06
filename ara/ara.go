@@ -14,22 +14,30 @@ import (
 	"github.com/massarakhsh/lik"
 )
 
+// Дескриптор  соединения с БД ARA
 type ItAra struct {
-	Addresses  []string
-	Part       string
-	Seconds    int
-	Token      string
-	Key        string
-	LastTry    time.Time
-	LastOnline time.Time
+	Addresses  []string  //	Список url - адресов пиров
+	Part       string    //	Раздел базы данных сервиса
+	Seconds    int       //	Keep-live сервиса в секундах
+	Token      string    //	Токен для регистрации в ARA
+	Key        string    //	Ключ экземпляра сервиса
+	LastTry    time.Time //	Время последней попытки регистрации
+	LastOnline time.Time //	Время последней удачной регистрации
 }
 
+// Построить дескриптор сервиса ARA
+// address - список адресов пиров
+// part - раздел базы данных
+// seconds - keep-live сервиса в секундах
+// token - токен для регистрациив ARA
 func Build(address []string, part string, seconds int, token string) *ItAra {
 	it := &ItAra{Addresses: address, Part: part, Seconds: seconds, Token: token}
 	return it
 }
 
-func (it *ItAra) Connect(data string) bool {
+// Регистрация сервиса в ARA
+// data - конфигурация сервиса (разгруженная структура JSON)
+func (it *ItAra) Register(data string) bool {
 	for _, peer := range it.Addresses {
 		uri := fmt.Sprintf("%s/register?part=%s&duration=%d", peer, it.Part, it.Seconds)
 		if it.Key != "" {
