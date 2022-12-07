@@ -23,6 +23,8 @@ type ItAra struct {
 	Key        string    //	Ключ экземпляра сервиса
 	LastTry    time.Time //	Время последней попытки регистрации
 	LastOnline time.Time //	Время последней удачной регистрации
+	isStarted  bool      // Запущена автоматическая перерегистрация
+	isStoping  bool      // Останавливается автоматическая перерегистрация
 }
 
 // Построить дескриптор сервиса ARA
@@ -33,6 +35,33 @@ type ItAra struct {
 func Build(address []string, part string, seconds int, token string) *ItAra {
 	it := &ItAra{Addresses: address, Part: part, Seconds: seconds, Token: token}
 	return it
+}
+
+// Запуск автоматической перерегистрации
+func (it *ItAra) StartAutoRegister(seconds int, data string) bool {
+	if !it.isStarted {
+		it.isStarted = true
+		go func() {
+			for !it.isStoping {
+				if time.Since(it.LastTry) >= time.Second * time.Duration(seconds) {
+					it.Register(data)
+				}
+				time.Sleep(time.Millisecond * 100)
+			}
+			it.isStarted = false
+		}()
+		return true
+	}
+	return false
+}
+
+// Останов автоматической перерегистрации
+func (it *ItAra) StopAutoRegister() bool {
+	if it.isStarted {
+		it.isStoping = true
+		return true
+	}
+	return false
 }
 
 // Регистрация сервиса в ARA

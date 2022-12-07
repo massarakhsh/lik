@@ -48,13 +48,13 @@ func (elm *ItElm) Delete() bool {
 func (elm *ItElm) ToMap() lik.Seter {
 	item := lik.BuildSet()
 	if elm.Id > 0 {
-		item.SetItem(elm.Id, "id")
+		item.SetValue("id", elm.Id)
 	}
 	elm.ClearInfo()
 	if elm.Info != nil {
-		item.SetItem(elm.Info.Serialize(), "info")
+		item.SetValue("info", elm.Info.Serialize())
 	} else {
-		item.SetItem("{}", "info")
+		item.SetValue("info", "{}")
 	}
 	return item
 }
@@ -80,7 +80,7 @@ func (elm *ItElm) clearItemSet(item lik.Seter) bool {
 		} else if val.IsFloat() {
 			delit = val.ToFloat() == 0
 		} else if val.IsBool() {
-			delit = val.ToBool() == false
+			delit = !val.ToBool()
 		} else if val.IsString() {
 			delit = val.ToString() == ""
 		} else if set := val.ToSet(); set != nil {
@@ -198,7 +198,7 @@ func (elm *ItElm) SetValue(value interface{}, path string) bool {
 		elm.Info = lik.BuildSet()
 		elm.OnModify()
 	}
-	if elm.Info.SetItem(value, path) {
+	if elm.Info.SetValue(path, value) {
 		elm.OnModify()
 	}
 	return modify

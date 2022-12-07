@@ -1,6 +1,6 @@
 package lik
 
-//	Интерфейс динамических списков
+// Интерфейс динамических списков
 type Lister interface {
 	Itemer
 	Count() int
@@ -16,11 +16,10 @@ type Lister interface {
 	AddItemers(vals []Itemer)
 	InsertItem(val interface{}, idx int)
 	AddItemSet(vals ...interface{}) Seter
-	SetItem(val interface{}, idx int) bool
+	SetValue(idx int, val interface{}) bool
 	DelItem(idx int) bool
 	SwapItem(pos1 int, pos2 int)
 	ToCsv(dlm string) string
-	ToXml() string
 	Values() []Itemer
 	Self() *DItemList
 }
@@ -136,7 +135,7 @@ func (it *DItemList) GetSet(idx int) Seter {
 	return nil
 }
 
-func (it *DItemList) SetItem(val interface{}, idx int) bool {
+func (it *DItemList) SetValue(idx int, val interface{}) bool {
 	modify := false
 	if idx >= 0 && idx < len(it.Val) {
 		if val != nil {
@@ -166,7 +165,7 @@ func (it *DItemList) SetItem(val interface{}, idx int) bool {
 }
 
 func (it *DItemList) DelItem(idx int) bool {
-	return it.SetItem(nil, idx)
+	return it.SetValue(idx, nil)
 }
 
 func (it *DItemList) AddItems(vals ...interface{}) {
@@ -240,10 +239,5 @@ func (it *DItemList) ToCsv(dlm string) string {
 			dump += "\r\n"
 		}
 	}
-	return dump
-}
-
-func (it *DItemList) ToXml() string {
-	dump := XML_ListToString("", it)
 	return dump
 }

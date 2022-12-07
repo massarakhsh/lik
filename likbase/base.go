@@ -279,18 +279,18 @@ func (dbs *DBase) BuildOneMap(row *sql.Rows) *lik.DItemSet {
 		}
 		if typ == "INT" || typ == "INTEGER" {
 			if val, ok := lik.StrToIntIf(str); ok {
-				elm.SetItem(val, key)
+				elm.SetValue(key, val)
 			}
 		} else if typ == "BIGINT" {
 			if val, ok := lik.StrToIntIf(str); ok {
-				elm.SetItem(val, key)
+				elm.SetValue(key, val)
 			}
 		} else if typ == "REAL" {
 			if rl, ok := strconv.ParseFloat(str, 64); ok == nil {
 				_ = rl
 			}
 		} else /*if typ == "VARCHAR"*/ {
-			elm.SetItem(str, key)
+			elm.SetValue(key, str)
 		}
 	}
 

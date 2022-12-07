@@ -42,9 +42,9 @@ func GetArgs(args []string) (Seter, bool) {
 		}
 		if len(key) > 0 {
 			if vali, ok := StrToIntIf(val); ok {
-				maper.SetItem(vali, key)
+				maper.SetValue(key, vali)
 			} else {
-				maper.SetItem(val, key)
+				maper.SetValue(key, val)
 			}
 		}
 	}

@@ -20,7 +20,7 @@ type Seter interface {
 	GetSet(path string) Seter
 	GetIDB(path string) IDB
 	DelItem(path string) bool
-	SetItem(val interface{}, path string) bool
+	SetValue(path string, val interface{}) bool
 	SetValues(vals ...interface{})
 	AddSet(path string) Seter
 	AddList(path string) Lister
@@ -31,7 +31,7 @@ type Seter interface {
 	Keys() []string
 	SortKeys() []string
 	Self() *DItemSet
-	SetFromString(val string, key string)
+	SetString(key string, val string)
 }
 
 func BuildSet(vals ...interface{}) Seter {
@@ -58,19 +58,19 @@ func (it *DItemSet) SetValues(vals ...interface{}) {
 				val := match[2]
 				val = strings.Trim(val, "'\"")
 				if ival, ok := StrToIntIf(val); ok {
-					it.SetItem(ival, key)
+					it.SetValue(key, ival)
 				} else if fval, ok := StrToFloatIf(val); ok {
-					it.SetItem(fval, key)
+					it.SetValue(key, fval)
 				} else if val == "true" {
-					it.SetItem(true, key)
+					it.SetValue(key, true)
 				} else if val == "false" {
-					it.SetItem(false, key)
+					it.SetValue(key, false)
 				} else {
-					it.SetItem(val, key)
+					it.SetValue(key, val)
 				}
 			} else if len(key) > 0 && nv+1 < len(vals) {
 				nv++
-				it.SetItem(vals[nv], key)
+				it.SetValue(key, vals[nv])
 			}
 		}
 	}
@@ -80,7 +80,7 @@ func (it *DItemSet) clone() Itemer {
 	cpy := BuildSet()
 	for _, set := range it.Val {
 		if val := set.Val; val != nil {
-			cpy.SetItem(val.Clone(), set.Key)
+			cpy.SetValue(set.Key, val.Clone())
 		}
 	}
 	return cpy
@@ -236,14 +236,14 @@ func (it *DItemSet) DelItem(path string) bool {
 	return modify
 }
 
-func (it *DItemSet) SetItem(val interface{}, path string) bool {
+func (it *DItemSet) SetValue(path string, val interface{}) bool {
 	modify := false
 	if val == nil {
 		if it.DelItem(path) {
 			modify = true
 		}
 	} else if name, ext := GetFirstExt(path); name == "" && ext != "" {
-		if it.SetItem(val, ext) {
+		if it.SetValue(ext, val) {
 			modify = true
 		}
 	} else if name != "" {
@@ -286,13 +286,13 @@ func (it *DItemSet) SetItem(val interface{}, path string) bool {
 
 func (it *DItemSet) AddSet(path string) Seter {
 	item := BuildSet()
-	it.SetItem(item, path)
+	it.SetValue(path, item)
 	return item
 }
 
 func (it *DItemSet) AddList(path string) Lister {
 	item := BuildList()
-	it.SetItem(item, path)
+	it.SetValue(path, item)
 	return item
 }
 
@@ -318,17 +318,17 @@ func (it *DItemSet) SortKeys() []string {
 	return keys
 }
 
-func (it *DItemSet) SetFromString(val string, key string) {
+func (it *DItemSet) SetString(key string, val string) {
 	if val == "true" {
-		it.SetItem(true, key)
+		it.SetValue(key, true)
 	} else if val == "false" {
-		it.SetItem(false, key)
+		it.SetValue(key, false)
 	} else if num, ok := StrToIntIf(val); ok {
-		it.SetItem(num, key)
+		it.SetValue(key, num)
 	} else if num, ok := StrToFloatIf(val); ok {
-		it.SetItem(num, key)
+		it.SetValue(key, num)
 	} else {
-		it.SetItem(val, key)
+		it.SetValue(key, val)
 	}
 }
 
@@ -339,10 +339,10 @@ func (it *DItemSet) Merge(set Seter) {
 				if to := it.GetSet(pair.Key); to != nil {
 					to.Merge(val.ToSet())
 				} else {
-					it.SetItem(val, pair.Key)
+					it.SetValue(pair.Key, val)
 				}
 			} else {
-				it.SetItem(val, pair.Key)
+				it.SetValue(pair.Key, val)
 			}
 		}
 	}

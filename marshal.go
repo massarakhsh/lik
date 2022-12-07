@@ -50,7 +50,7 @@ func SetFromRequest(data string) Seter {
 				pars := buildParse(val)
 				item := pars.scanItValue()
 				if key != "" {
-					result.SetItem(item, key)
+					result.SetValue(key, item)
 				}
 			}
 		}
@@ -135,7 +135,7 @@ func (pars *JsonParse) scanItMap() Seter {
 		pars.stepNextRune()
 		item := pars.scanItValue()
 		if item != nil {
-			info.SetItem(item, key)
+			info.SetValue(key, item)
 		}
 		ch = pars.getNextRune()
 		if ch == ',' {

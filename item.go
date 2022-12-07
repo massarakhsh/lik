@@ -497,7 +497,7 @@ func setInfoItem(val interface{}, info Itemer, path string) bool {
 		modify = setInfoItem(val, info, ext)
 	} else if imap := info.ToSet(); imap != nil {
 		if ext == "" {
-			if imap.SetItem(val, name) {
+			if imap.SetValue(name, val) {
 				modify = true
 			}
 		} else if item := imap.GetItem(name); item != nil {
@@ -507,18 +507,18 @@ func setInfoItem(val interface{}, info Itemer, path string) bool {
 		} else if RegExCompare(ext, "^(\\d+)") {
 			modify = true
 			item := BuildList()
-			imap.SetItem(item, name)
+			imap.SetValue(name, item)
 			setInfoItem(val, item, ext)
 		} else {
 			modify = true
 			item := BuildSet()
-			imap.SetItem(item, name)
+			imap.SetValue(name, item)
 			setInfoItem(val, item, ext)
 		}
 	} else if ilist := info.ToList(); ilist != nil {
 		if idx, ok := StrToIntIf(name); ok {
 			if ext == "" {
-				if ilist.SetItem(BuildItem(val), idx) {
+				if ilist.SetValue(idx, BuildItem(val)) {
 					modify = true
 				}
 			} else if item := ilist.GetItem(idx); item != nil {
@@ -528,12 +528,12 @@ func setInfoItem(val interface{}, info Itemer, path string) bool {
 			} else if RegExCompare(ext, "^(\\d+)") {
 				modify = true
 				item := BuildList()
-				ilist.SetItem(item, idx)
+				ilist.SetValue(idx, item)
 				setInfoItem(val, item, ext)
 			} else {
 				modify = true
 				item := BuildSet()
-				ilist.SetItem(item, idx)
+				ilist.SetValue(idx, item)
 				setInfoItem(val, item, ext)
 			}
 		}
