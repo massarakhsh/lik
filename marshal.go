@@ -58,6 +58,14 @@ func SetFromRequest(data string) Seter {
 	return result
 }
 
+func SetFromMap(data map[string]interface{}) Seter {
+	result := BuildSet()
+	for key, val := range data {
+		result.SetValue(key, val)
+	}
+	return result
+}
+
 func ListFromRequest(data string) Lister {
 	result := BuildList()
 	data = strings.Trim(data, " \n\r\t")
