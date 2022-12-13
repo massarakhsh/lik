@@ -1,8 +1,8 @@
-# Overview
+# Библиотека lik
 
 Управление динамическими объектами
 
-- [Overview](#overview)
+- [Библиотека lik](#библиотека-lik)
   - [Examples](#examples)
   - [Interfaces](#interfaces)
   - [Interface LikItem](#interface-likitem)
@@ -19,11 +19,13 @@
 - Получение интерфейсов подобъектов и работа непосредственно с ними
 - Обильный синтаксический сахар для работы со структурами
 
+
+
 ## Examples
 
 ``` go
 set := lik.BuildSet("id", id, "url", url, "active=true")
-set.SetItem()
+set.SetValue("power", 17.5)
 tags := set.AddList("tags")
 tags.AddItems("cache", "reset")
 ```
@@ -34,6 +36,7 @@ tags.AddItems("cache", "reset")
 {
   "id": "stream37",
   "url": "http://12.34.56.78:9090",
+  "power": 17.5,
   "active": true,
   "tags": [
     "cache",
