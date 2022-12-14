@@ -35,7 +35,6 @@
     - [set.GetString(path string) string](#setgetstringpath-string-string)
     - [set.GetList(path string) Lister](#setgetlistpath-string-lister)
     - [set.GetSet(path string) Seter](#setgetsetpath-string-seter)
-    - [set.GetIDB(path string) IDB](#setgetidbpath-string-idb)
     - [set.DelItem(path string) bool](#setdelitempath-string-bool)
     - [set.SetValue(path string, val interface{}) bool](#setsetvaluepath-string-val-interface-bool)
     - [set.SetValues(vals ...interface{})](#setsetvaluesvals-interface)
@@ -273,55 +272,92 @@ set2 := lik.BuildSet("id", myId, "value", set1)
 
 Находит, какую позицию занимает поле с именем `key` в списке всех полей, если не найдено -1
 
-В качестве имени может быть указан полный путь поля, как и во всех следующих функциях.
-
 ### set.IsItem(path string) bool
 
-Проверяет, присутствует ли в структуре поле с именем `key`
+Проверяет, присутствует ли в структуре поле с именем `path`
+
+В качестве имени может быть указан полный путь поля, как и во всех следующих функциях.
 
 ### set.GetItem(path string) Itemer
 
-Возвращает интерфейс объекта в поле с именем `key`, если не найдено - nil
+Возвращает интерфейс объекта в поле с именем `path`, если не найдено - nil
 
 ### set.GetBool(path string) bool
 
+Возвращает значение поля `path` как булевское значение, преобразование аналогично `ToBool`, если нет - `false`
+
 ### set.GetInt(path string) int64
+
+Возвращает значение поля `path` как целое значение, преобразование аналогично `ToInt`, если нет - `0`
 
 ### set.GetFloat(path string) float64
 
+Возвращает значение поля `path` как значение с плавающей точкой, преобразование аналогично `ToFloat`, если нет - `0`
+
 ### set.GetString(path string) string
+
+Возвращает значение поля `path` как значение строки, преобразование аналогично `ToString`, если нет - пустая строка
 
 ### set.GetList(path string) Lister
 
+Возвращает значение поля `path` как массив, если нет или не массив, возвращается nil
+
 ### set.GetSet(path string) Seter
 
-### set.GetIDB(path string) IDB
+Возвращает значение поля `path` как струкура, если нет или не структура, возвращается nil
 
 ### set.DelItem(path string) bool
 
+Удаляет поле с именем `path`, возвращается true, если изменения были внесены
+
 ### set.SetValue(path string, val interface{}) bool
+
+Устанавливает поле с именем `path` в значение `val`, можно указать любое значение, допустмое в функции BuildItem()
 
 ### set.SetValues(vals ...interface{})
 
+Устанавливает несколько значений, синтаксис аналогичен BuildSet()
+
 ### set.AddSet(path string) Seter
+
+Добавляет структуру в поле с путём `path`, возвращает интерфейс на новую структуру
 
 ### set.AddList(path string) Lister
 
+Добавляет массив в поле с путём `path`, возвращает интерфейс на новый массив
+
 ### set.DelPos(pos int) bool
+
+Удаляет поле по относительной позиции `pos`
 
 ### set.Merge(set Seter)
 
+Объединяет структуры, добавляя в текущую все поля из структуры `set`, одноимённые поля заменяются.
+
 ### set.ToJson() string
+
+Аналогично функции item.Serialize()
 
 ### set.Values() []SetElm
 
+Возвращает массив всех полей струкуры в формате []ItSet
+
 ### set.Keys() []string
+
+Возвращает массив всех имён полей в формате []string
 
 ### set.SortKeys() []string
 
+Возвращает отсортированный массив всех имён полей в формате []string
+
 ### set.Self() *DItemSet
 
+Возвращает указатель на объект, которому принадлежит интерфейс
+
 ### set.SetString(key string, val string)
+
+Устанавливает поле `key` в значение `val`, при этом автомаически преобразовываются значения `true`, `false`,
+а также целые т плавающие числа
 
 ## Interface LikList
 
