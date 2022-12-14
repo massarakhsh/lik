@@ -49,6 +49,7 @@
     - [set.Self() \*DItemSet](#setself-ditemset)
     - [set.SetString(key string, val string)](#setsetstringkey-string-val-string)
   - [Interface LikList](#interface-liklist)
+    - [BuildList(data ...interface{}) List](#buildlistdata-interface-list)
     - [list.Count() int](#listcount-int)
     - [list.GetItem(idx int) Itemer](#listgetitemidx-int-itemer)
     - [list.GetBool(idx int) bool](#listgetboolidx-int-bool)
@@ -57,7 +58,6 @@
     - [list.GetString(idx int) string](#listgetstringidx-int-string)
     - [list.GetList(idx int) Lister](#listgetlistidx-int-lister)
     - [list.GetSet(idx int) Seter](#listgetsetidx-int-seter)
-    - [list.GetIDB(idx int) IDB](#listgetidbidx-int-idb)
     - [list.AddItems(vals ...interface{})](#listadditemsvals-interface)
     - [list.AddItemers(vals \[\]Itemer)](#listadditemersvals-itemer)
     - [list.InsertItem(val interface{}, idx int)](#listinsertitemval-interface-idx-int)
@@ -65,7 +65,6 @@
     - [list.SetValue(idx int, val interface{}) bool](#listsetvalueidx-int-val-interface-bool)
     - [list.DelItem(idx int) bool](#listdelitemidx-int-bool)
     - [list.SwapItem(pos1 int, pos2 int)](#listswapitempos1-int-pos2-int)
-    - [list.ToCsv(dlm string) string](#listtocsvdlm-string-string)
     - [list.Values() \[\]Itemer](#listvalues-itemer)
     - [list.Self() \*DItemList](#listself-ditemlist)
 
@@ -363,40 +362,103 @@ set2 := lik.BuildSet("id", myId, "value", set1)
 
 Интерфейс динамического объекта типа "массив"
 
+Массив содержит упорядоченный набор неименованных полей, значение каждого из которых
+является динамическим объектом. Обращение к элементам массива происходит по индексу,
+числу, начинающемуся с 0.
+
+При указании путей в динамическом объекте индексы могут присутствовать в позициях отдельных имён.
+
+``` go
+list.SetValue(5, "0123456789")
+set.setValue("options/pool/5/autorun", true)
+```
+
+### BuildList(data ...interface{}) List
+
+Создаётся новый объект-массив и возвращается его интерфейс
+
+В параметрах, если они указаны, можно указать объекты, которые заносятся в массив
+
+``` go
+list0 := lik.BuildList()
+list1 := lik.BuildList(a, b, c, 16, "hoo")
+list2 := lik.BuildList("alpha", "beta", list1)
+```
+
+Как значения могут быть указаны:
+
+- целое число int, uint, int32, uint32, int64, uint64 или производный от них тип
+- плавающее число float32, float64 или пропизводный
+- строка string или производный
+- булевский bool или производный
+- интерфейс Itemer или объект совместимого типа
+- интерфейс Lister или объект совместимого типа
+- интерфейс Seter или объект совместимого типа
+
 ### list.Count() int
+
+Возвращает текущее количество элементов массива
 
 ### list.GetItem(idx int) Itemer
 
+Возвращает объект, элемент номер `idx`
+
 ### list.GetBool(idx int) bool
+
+Возвращает элемент массива как булевское
 
 ### list.GetInt(idx int) int64
 
+Возвращает элемент массива как целое
+
 ### list.GetFloat(idx int) float64
+
+Возвращает элемент массива как плавающее
 
 ### list.GetString(idx int) string
 
+Возвращает элемент массива как строку
+
 ### list.GetList(idx int) Lister
+
+Возвращает элемент массива как массив, если это не массив, то nil
 
 ### list.GetSet(idx int) Seter
 
-### list.GetIDB(idx int) IDB
+Возвращает элемент массива как структуру, если это не структура, то nil
 
 ### list.AddItems(vals ...interface{})
 
+Добавляет в массив новые элементы
+
 ### list.AddItemers(vals []Itemer)
+
+Добавляет в массив новые элементы
 
 ### list.InsertItem(val interface{}, idx int)
 
+Вставляет новый элемент по указанному индексу
+
 ### list.AddItemSet(vals ...interface{}) Seter
+
+Создаёт новую струкуру и добавляет в массив, синтаксис аналогичен BuildSet()
 
 ### list.SetValue(idx int, val interface{}) bool
 
+Устанавливает значение элемента массива, возвращает true, если были внесены изменения
+
 ### list.DelItem(idx int) bool
+
+Удаляет элемент по номеру
 
 ### list.SwapItem(pos1 int, pos2 int)
 
-### list.ToCsv(dlm string) string
+Меняет местами два элемента
 
 ### list.Values() []Itemer
 
+Возвращает массив элементов массива
+
 ### list.Self() *DItemList
+
+Возвращает указатель на объект, которому принадлежит интерфейс
