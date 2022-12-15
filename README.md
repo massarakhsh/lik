@@ -3,70 +3,74 @@
 Управление динамическими объектами
 
 - [Lik](#lik)
-  - [Examples](#examples)
-  - [Interfaces](#interfaces)
-  - [Interface LikItem](#interface-likitem)
-    - [BuildItem(data interface{}) Itemer](#builditemdata-interface-itemer)
-    - [item.Clone() Itemer](#itemclone-itemer)
-    - [item.IsBool() bool](#itemisbool-bool)
-    - [item.IsInt() bool](#itemisint-bool)
-    - [item.IsFloat() bool](#itemisfloat-bool)
-    - [item.IsString() bool](#itemisstring-bool)
-    - [item.IsList() bool](#itemislist-bool)
-    - [item.IsSet() bool](#itemisset-bool)
-    - [item.ToBool() bool](#itemtobool-bool)
-    - [item.ToInt() int64](#itemtoint-int64)
-    - [item.ToFloat() float64](#itemtofloat-float64)
-    - [item.ToString() string](#itemtostring-string)
-    - [item.ToList() Lister](#itemtolist-lister)
-    - [item.ToSet() Seter](#itemtoset-seter)
-    - [item.Serialize() string](#itemserialize-string)
-    - [item.Format(prefix string) string](#itemformatprefix-string-string)
-  - [Interface LikSet](#interface-likset)
-    - [BuildSet(data ...interface{}) Set](#buildsetdata-interface-set)
-    - [BuildStringSet(data ...string) Set](#buildstringsetdata-string-set)
-    - [set.Count() int](#setcount-int)
-    - [set.Seek(key string) int](#setseekkey-string-int)
-    - [set.IsItem(path string) bool](#setisitempath-string-bool)
-    - [set.GetItem(path string) Itemer](#setgetitempath-string-itemer)
-    - [set.GetBool(path string) bool](#setgetboolpath-string-bool)
-    - [set.GetInt(path string) int64](#setgetintpath-string-int64)
-    - [set.GetFloat(path string) float64](#setgetfloatpath-string-float64)
-    - [set.GetString(path string) string](#setgetstringpath-string-string)
-    - [set.GetList(path string) Lister](#setgetlistpath-string-lister)
-    - [set.GetSet(path string) Seter](#setgetsetpath-string-seter)
-    - [set.DelItem(path string) bool](#setdelitempath-string-bool)
-    - [set.SetValue(path string, val interface{}) bool](#setsetvaluepath-string-val-interface-bool)
-    - [set.SetValues(vals ...interface{})](#setsetvaluesvals-interface)
-    - [set.AddSet(path string) Seter](#setaddsetpath-string-seter)
-    - [set.AddList(path string) Lister](#setaddlistpath-string-lister)
-    - [set.DelPos(pos int) bool](#setdelpospos-int-bool)
-    - [set.Merge(set Seter)](#setmergeset-seter)
-    - [set.ToJson() string](#settojson-string)
-    - [set.Values() \[\]SetElm](#setvalues-setelm)
-    - [set.Keys() \[\]string](#setkeys-string)
-    - [set.SortKeys() \[\]string](#setsortkeys-string)
-    - [set.Self() \*DItemSet](#setself-ditemset)
-    - [set.SetString(key string, val string)](#setsetstringkey-string-val-string)
-  - [Interface LikList](#interface-liklist)
-    - [BuildList(data ...interface{}) List](#buildlistdata-interface-list)
-    - [list.Count() int](#listcount-int)
-    - [list.GetItem(idx int) Itemer](#listgetitemidx-int-itemer)
-    - [list.GetBool(idx int) bool](#listgetboolidx-int-bool)
-    - [list.GetInt(idx int) int64](#listgetintidx-int-int64)
-    - [list.GetFloat(idx int) float64](#listgetfloatidx-int-float64)
-    - [list.GetString(idx int) string](#listgetstringidx-int-string)
-    - [list.GetList(idx int) Lister](#listgetlistidx-int-lister)
-    - [list.GetSet(idx int) Seter](#listgetsetidx-int-seter)
-    - [list.AddItems(vals ...interface{})](#listadditemsvals-interface)
-    - [list.AddItemers(vals \[\]Itemer)](#listadditemersvals-itemer)
-    - [list.InsertItem(val interface{}, idx int)](#listinsertitemval-interface-idx-int)
-    - [list.AddItemSet(vals ...interface{}) Seter](#listadditemsetvals-interface-seter)
-    - [list.SetValue(idx int, val interface{}) bool](#listsetvalueidx-int-val-interface-bool)
-    - [list.DelItem(idx int) bool](#listdelitemidx-int-bool)
-    - [list.SwapItem(pos1 int, pos2 int)](#listswapitempos1-int-pos2-int)
-    - [list.Values() \[\]Itemer](#listvalues-itemer)
-    - [list.Self() \*DItemList](#listself-ditemlist)
+	- [Examples](#examples)
+	- [Interfaces](#interfaces)
+	- [Functions](#functions)
+		- [Создать объект BuildItem(data interface{}) Itemer](#создать-объект-builditemdata-interface-itemer)
+		- [BuildSet(data ...interface{}) Set](#buildsetdata-interface-set)
+		- [SetFromMap(data map\[string\]interface{}) Seter](#setfrommapdata-mapstringinterface-seter)
+		- [BuildStringSet(data ...string) Set](#buildstringsetdata-string-set)
+		- [BuildList(data ...interface{}) List](#buildlistdata-interface-list)
+		- [SetFromRequest(data string) Seter](#setfromrequestdata-string-seter)
+		- [ListFromRequest(data string) Lister](#listfromrequestdata-string-lister)
+	- [Interface LikItem](#interface-likitem)
+		- [item.Clone() Itemer](#itemclone-itemer)
+		- [item.IsBool() bool](#itemisbool-bool)
+		- [item.IsInt() bool](#itemisint-bool)
+		- [item.IsFloat() bool](#itemisfloat-bool)
+		- [item.IsString() bool](#itemisstring-bool)
+		- [item.IsList() bool](#itemislist-bool)
+		- [item.IsSet() bool](#itemisset-bool)
+		- [item.ToBool() bool](#itemtobool-bool)
+		- [item.ToInt() int64](#itemtoint-int64)
+		- [item.ToFloat() float64](#itemtofloat-float64)
+		- [item.ToString() string](#itemtostring-string)
+		- [item.ToList() Lister](#itemtolist-lister)
+		- [item.ToSet() Seter](#itemtoset-seter)
+		- [item.Serialize() string](#itemserialize-string)
+		- [item.Format(prefix string) string](#itemformatprefix-string-string)
+	- [Interface LikSet](#interface-likset)
+		- [set.Count() int](#setcount-int)
+		- [set.Seek(key string) int](#setseekkey-string-int)
+		- [set.IsItem(path string) bool](#setisitempath-string-bool)
+		- [set.GetItem(path string) Itemer](#setgetitempath-string-itemer)
+		- [set.GetBool(path string) bool](#setgetboolpath-string-bool)
+		- [set.GetInt(path string) int64](#setgetintpath-string-int64)
+		- [set.GetFloat(path string) float64](#setgetfloatpath-string-float64)
+		- [set.GetString(path string) string](#setgetstringpath-string-string)
+		- [set.GetList(path string) Lister](#setgetlistpath-string-lister)
+		- [set.GetSet(path string) Seter](#setgetsetpath-string-seter)
+		- [set.DelItem(path string) bool](#setdelitempath-string-bool)
+		- [set.SetValue(path string, val interface{}) bool](#setsetvaluepath-string-val-interface-bool)
+		- [set.SetValues(vals ...interface{})](#setsetvaluesvals-interface)
+		- [set.AddSet(path string) Seter](#setaddsetpath-string-seter)
+		- [set.AddList(path string) Lister](#setaddlistpath-string-lister)
+		- [set.DelPos(pos int) bool](#setdelpospos-int-bool)
+		- [set.Merge(set Seter)](#setmergeset-seter)
+		- [set.ToJson() string](#settojson-string)
+		- [set.Values() \[\]SetElm](#setvalues-setelm)
+		- [set.Keys() \[\]string](#setkeys-string)
+		- [set.SortKeys() \[\]string](#setsortkeys-string)
+		- [set.Self() \*DItemSet](#setself-ditemset)
+		- [set.SetString(key string, val string)](#setsetstringkey-string-val-string)
+	- [Interface LikList](#interface-liklist)
+		- [list.Count() int](#listcount-int)
+		- [list.GetItem(idx int) Itemer](#listgetitemidx-int-itemer)
+		- [list.GetBool(idx int) bool](#listgetboolidx-int-bool)
+		- [list.GetInt(idx int) int64](#listgetintidx-int-int64)
+		- [list.GetFloat(idx int) float64](#listgetfloatidx-int-float64)
+		- [list.GetString(idx int) string](#listgetstringidx-int-string)
+		- [list.GetList(idx int) Lister](#listgetlistidx-int-lister)
+		- [list.GetSet(idx int) Seter](#listgetsetidx-int-seter)
+		- [list.AddItems(vals ...interface{})](#listadditemsvals-interface)
+		- [list.AddItemers(vals \[\]Itemer)](#listadditemersvals-itemer)
+		- [list.InsertItem(val interface{}, idx int)](#listinsertitemval-interface-idx-int)
+		- [list.AddItemSet(vals ...interface{}) Seter](#listadditemsetvals-interface-seter)
+		- [list.SetValue(idx int, val interface{}) bool](#listsetvalueidx-int-val-interface-bool)
+		- [list.DelItem(idx int) bool](#listdelitemidx-int-bool)
+		- [list.SwapItem(pos1 int, pos2 int)](#listswapitempos1-int-pos2-int)
+		- [list.Values() \[\]Itemer](#listvalues-itemer)
+		- [list.Self() \*DItemList](#listself-ditemlist)
 
 Библиотека предоставляет несколько интерфейсов, позволяющих организовать сложные многоуровневые динамические объекты,
 объединяющие простые скалярные значения, структуры из именованных полей - объектов и массивы объектов.
@@ -112,11 +116,9 @@ tags.AddItems("cache", "reset")
 - LikSet - Интерфейс структур
 - LikList - Интерфейс массивов
 
-## Interface LikItem
+## Functions
 
-Базовый интерфейс для всех динамических объектов
-
-### BuildItem(data interface{}) Itemer
+### Создать объект BuildItem(data interface{}) Itemer
 
 Создаётся новый динамический объект и возвращается его интерфейс
 
@@ -129,6 +131,63 @@ tags.AddItems("cache", "reset")
 - интерфейс Itemer или объект совместимого типа
 - интерфейс Lister или объект совместимого типа
 - интерфейс Seter или объект совместимого типа
+
+### BuildSet(data ...interface{}) Set
+
+Создаётся новый объект-структура и возвращается его интерфейс
+
+В параметрах, если они указаны, можно задать поля и значения, которыми инициализируется структура.
+Можно либо последовательно указывать имя и значение поля, либо в одной строке в форме `имя=значение`, например:
+
+``` go
+set0 := lik.BuildSet()
+set1 := lik.BuildSet("alpha=1", "beta=2", "autostart=true")
+set2 := lik.BuildSet("id", myId, "value", set1)
+```
+
+Как значения могут быть указаны те же элементы, что и в функции BuildItem
+
+### SetFromMap(data map[string]interface{}) Seter
+
+Создается новая структура из массива полей
+
+### BuildStringSet(data ...string) Set
+
+Аналогично функции `BuildSet`, но в параметрах указываются только строки
+
+### BuildList(data ...interface{}) List
+
+Создаётся новый объект-массив и возвращается его интерфейс
+
+В параметрах, если они указаны, можно указать объекты, которые заносятся в массив
+
+``` go
+list0 := lik.BuildList()
+list1 := lik.BuildList(a, b, c, 16, "hoo")
+list2 := lik.BuildList("alpha", "beta", list1)
+```
+
+Как значения могут быть указаны:
+
+- целое число int, uint, int32, uint32, int64, uint64 или производный от них тип
+- плавающее число float32, float64 или пропизводный
+- строка string или производный
+- булевский bool или производный
+- интерфейс Itemer или объект совместимого типа
+- интерфейс Lister или объект совместимого типа
+- интерфейс Seter или объект совместимого типа
+
+### SetFromRequest(data string) Seter
+
+Создать структуру из строки
+
+### ListFromRequest(data string) Lister
+
+Создать массив из строки
+
+## Interface LikItem
+
+Базовый интерфейс для всех динамических объектов
 
 ### item.Clone() Itemer
 
@@ -235,33 +294,6 @@ iamset := iamitem.ToSet()
 set.SetValue("key", "0123456789")
 set.setValue("options/main/autorun", true)
 ```
-
-### BuildSet(data ...interface{}) Set
-
-Создаётся новый объект-структура и возвращается его интерфейс
-
-В параметрах, если они указаны, можно задать поля и значения, которыми инициализируется структура.
-Можно либо последовательно указывать имя и значение поля, либо в одной строке в форме `имя=значение`, например:
-
-``` go
-set0 := lik.BuildSet()
-set1 := lik.BuildSet("alpha=1", "beta=2", "autostart=true")
-set2 := lik.BuildSet("id", myId, "value", set1)
-```
-
-Как значения могут быть указаны:
-
-- целое число int, uint, int32, uint32, int64, uint64 или производный от них тип
-- плавающее число float32, float64 или пропизводный
-- строка string или производный
-- булевский bool или производный
-- интерфейс Itemer или объект совместимого типа
-- интерфейс Lister или объект совместимого типа
-- интерфейс Seter или объект совместимого типа
-
-### BuildStringSet(data ...string) Set
-
-Аналогично функции `BuildSet`, но в параметрах указываются только строки
 
 ### set.Count() int
 
@@ -373,28 +405,6 @@ list.SetValue(5, "0123456789")
 set.setValue("options/pool/5/autorun", true)
 ```
 
-### BuildList(data ...interface{}) List
-
-Создаётся новый объект-массив и возвращается его интерфейс
-
-В параметрах, если они указаны, можно указать объекты, которые заносятся в массив
-
-``` go
-list0 := lik.BuildList()
-list1 := lik.BuildList(a, b, c, 16, "hoo")
-list2 := lik.BuildList("alpha", "beta", list1)
-```
-
-Как значения могут быть указаны:
-
-- целое число int, uint, int32, uint32, int64, uint64 или производный от них тип
-- плавающее число float32, float64 или пропизводный
-- строка string или производный
-- булевский bool или производный
-- интерфейс Itemer или объект совместимого типа
-- интерфейс Lister или объект совместимого типа
-- интерфейс Seter или объект совместимого типа
-
 ### list.Count() int
 
 Возвращает текущее количество элементов массива
@@ -462,3 +472,4 @@ list2 := lik.BuildList("alpha", "beta", list1)
 ### list.Self() *DItemList
 
 Возвращает указатель на объект, которому принадлежит интерфейс
+
