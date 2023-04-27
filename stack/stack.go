@@ -32,9 +32,7 @@ func BuildRequest(r *http.Request) *ItStack {
 	it.Parms = lik.BuildSet()
 	it.Method = r.Method
 	it.IP = r.RemoteAddr
-	if match := lik.RegExParse(r.Host, "([^:]+)"); match != nil {
-		it.Host = match[1]
-	}
+	it.Host = r.Host
 	it.loadPath(r.RequestURI)
 	it.loadCookies(r)
 	it.loadAuth(r)
@@ -61,11 +59,7 @@ func (it *ItStack) loadPath(path string) {
 	}
 	for _, name := range parts {
 		if match := lik.RegExParse(name, "^([^=]+)=(.*)"); match != nil {
-			if match[1] == "_id" {
-				it.IdSession = lik.StrToInt(match[2])
-			} else {
-				it.Parms.SetValue(match[1], match[2])
-			}
+			it.Parms.SetValue(match[1], match[2])
 		} else if name != "" {
 			it.Path = append(it.Path, name)
 		}
