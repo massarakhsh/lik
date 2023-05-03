@@ -93,33 +93,59 @@ func BuildItem(data interface{}) Itemer {
 	case Seter:
 		item = val
 	default:
-		tp := reflect.TypeOf(data).Kind().String()
+		tp := reflect.TypeOf(data)
 		vl := reflect.ValueOf(data)
-		if tp == "bool" {
+		if vl.Kind() == reflect.Ptr {
+			tp = tp.Elem()
+			vl = vl.Elem()
+		}
+		tps := tp.Kind().String()
+		if tps == "bool" {
 			item = &DItemBool{vl.Bool()}
-		} else if tp == "int" {
+		} else if tps == "int" {
 			item = &DItemInt{vl.Int()}
-		} else if tp == "int32" {
+		} else if tps == "int32" {
 			item = &DItemInt{vl.Int()}
-		} else if tp == "int64" {
+		} else if tps == "int64" {
 			item = &DItemInt{vl.Int()}
-		} else if tp == "uint" {
+		} else if tps == "uint" {
 			item = &DItemInt{vl.Int()}
-		} else if tp == "uint32" {
+		} else if tps == "uint32" {
 			item = &DItemInt{vl.Int()}
-		} else if tp == "uint64" {
+		} else if tps == "uint64" {
 			item = &DItemInt{vl.Int()}
-		} else if tp == "float32" {
+		} else if tps == "float32" {
 			item = &DItemFloat{vl.Float()}
-		} else if tp == "float64" {
+		} else if tps == "float64" {
 			item = &DItemFloat{vl.Float()}
-		} else if tp == "string" {
+		} else if tps == "string" {
 			item = &DItemString{vl.String()}
+		} else if tps == "struct" {
+			item = SetFromReflectValue(tp, vl)
 		} else {
-			fmt.Println("BuildItem ERROR: ", data)
+			//fmt.Println("BuildItem ERROR: ", data)
 		}
 	}
 	return item
+}
+
+func SetFromReflectValue(tp reflect.Type, vl reflect.Value) Seter {
+	set := BuildSet()
+	cnt := vl.NumField()
+	for f := 0; f < cnt; f++ {
+		nam := tp.Field(f).Name
+		if val := vl.Field(f); val.IsValid() {
+			if !val.IsZero() {
+			} else if val.CanInt() {
+				set.SetValue(nam, val.Int())
+			} else if val.CanConvert(reflect.TypeOf("")) {
+				set.SetValue(nam, val.String())
+			} else if val.CanInterface() {
+				set.SetValue(nam, val.Interface())
+			}
+		}
+	}
+	return set
 }
 
 func (it *DItemBool) IsBool() bool {
