@@ -121,7 +121,9 @@ func BuildItem(data interface{}) Itemer {
 		} else if tps == "string" {
 			item = &DItemString{vl.String()}
 		} else if tps == "struct" {
-			item = SetFromReflectValue(tp, vl)
+			item = SetFromReflectStructure(tp, vl)
+		} else if tps == "slice" {
+			item = SetFromReflectSlice(tp, vl)
 		} else {
 			//fmt.Println("BuildItem ERROR: ", data)
 		}
@@ -129,23 +131,48 @@ func BuildItem(data interface{}) Itemer {
 	return item
 }
 
-func SetFromReflectValue(tp reflect.Type, vl reflect.Value) Seter {
+func BuildItemReflect(val reflect.Value) Itemer {
+	var item Itemer
+	if !val.IsValid() {
+	} else if val.CanInt() {
+		item = &DItemInt{val.Int()}
+	} else if val.CanFloat() {
+		item = &DItemFloat{val.Float()}
+	} else if val.CanConvert(reflect.TypeOf("")) {
+		item = &DItemString{val.String()}
+	} else if val.CanInterface() {
+		item = BuildItem(val.Interface())
+	}
+	return item
+}
+
+func SetFromReflectStructure(tp reflect.Type, vl reflect.Value) Seter {
 	set := BuildSet()
 	cnt := vl.NumField()
 	for f := 0; f < cnt; f++ {
 		nam := tp.Field(f).Name
 		if val := vl.Field(f); val.IsValid() {
 			if !val.IsZero() {
-			} else if val.CanInt() {
-				set.SetValue(nam, val.Int())
-			} else if val.CanConvert(reflect.TypeOf("")) {
-				set.SetValue(nam, val.String())
-			} else if val.CanInterface() {
-				set.SetValue(nam, val.Interface())
+				if item := BuildItemReflect(val); item != nil {
+					set.SetValue(nam, item)
+				}
 			}
 		}
 	}
 	return set
+}
+
+func SetFromReflectSlice(tp reflect.Type, vl reflect.Value) Lister {
+	list := BuildList()
+	cnt := vl.Len()
+	for n := 0; n < cnt; n++ {
+		if elm := vl.Index(n); elm.IsValid() {
+			if item := BuildItemReflect(elm); item != nil {
+				list.AddItems(item)
+			}
+		}
+	}
+	return list
 }
 
 func (it *DItemBool) IsBool() bool {
