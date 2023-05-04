@@ -150,7 +150,7 @@ func SetFromReflectStructure(tp reflect.Type, vl reflect.Value) Seter {
 	set := BuildSet()
 	cnt := vl.NumField()
 	for f := 0; f < cnt; f++ {
-		nam := tp.Field(f).Name
+		nam := To_snake_case(tp.Field(f).Name)
 		if val := vl.Field(f); val.IsValid() {
 			if !val.IsZero() {
 				if item := BuildItemReflect(val); item != nil {
