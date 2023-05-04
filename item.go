@@ -175,6 +175,11 @@ func SetFromReflectSlice(tp reflect.Type, vl reflect.Value) Lister {
 	return list
 }
 
+func To_snake_case(name string) string {
+	snakeCase := strings.ToLower(name[:1]) + strings.ReplaceAll(name[1:], "A", "_a")
+	return snakeCase
+}
+
 func (it *DItemBool) IsBool() bool {
 	return true
 }
