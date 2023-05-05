@@ -66,6 +66,10 @@ func SetFromMap(data map[string]interface{}) Seter {
 	return result
 }
 
+func SetFromStruct(data interface{}) Seter {
+	return BuildItem(data).ToSet()
+}
+
 func ListFromRequest(data string) Lister {
 	result := BuildList()
 	data = strings.Trim(data, " \n\r\t")
