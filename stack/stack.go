@@ -15,6 +15,7 @@ type ItStack struct {
 	Request        string
 	IP             string
 	Host           string
+	Port           int
 	Path           []string
 	Parms          lik.Seter
 	Info           lik.Seter
@@ -30,9 +31,7 @@ type ItStack struct {
 func BuildRequest(r *http.Request) *ItStack {
 	it := &ItStack{}
 	it.Parms = lik.BuildSet()
-	it.Method = r.Method
-	it.IP = r.RemoteAddr
-	it.Host = r.Host
+	it.loadHost(r)
 	it.loadPath(r.RequestURI)
 	it.loadCookies(r)
 	it.loadAuth(r)
@@ -46,6 +45,18 @@ func BuildMethodPath(method, path string) *ItStack {
 	it.Method = method
 	it.loadPath(path)
 	return it
+}
+
+func (it *ItStack) loadHost(r *http.Request) {
+	it.Method = r.Method
+	it.IP = r.RemoteAddr
+	if match := lik.RegExParse(r.Host, "^(.+):(\\d+)$"); match != nil {
+		it.Host = match[1]
+		it.Port = lik.StrToInt(match[2])
+	} else {
+		it.Host = r.Host
+		it.Port = 80
+	}
 }
 
 func (it *ItStack) loadPath(path string) {
