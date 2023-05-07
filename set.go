@@ -72,6 +72,10 @@ func (it *DItemSet) SetValues(vals ...interface{}) {
 				nv++
 				it.SetValue(key, vals[nv])
 			}
+		default:
+			if item := BuildItem(vk); item != nil && item.IsSet() {
+				it.Merge(item.ToSet())
+			}
 		}
 	}
 }

@@ -122,6 +122,8 @@ func BuildItem(data interface{}) Itemer {
 			item = &DItemString{vl.String()}
 		} else if tps == "struct" {
 			item = SetFromReflectStructure(tp, vl)
+		} else if tps == "map" {
+			item = SetFromReflectMap(tp, vl)
 		} else if tps == "slice" {
 			item = SetFromReflectSlice(tp, vl)
 		} else {
@@ -156,6 +158,19 @@ func SetFromReflectStructure(tp reflect.Type, vl reflect.Value) Seter {
 				if item := BuildItemReflect(val); item != nil {
 					set.SetValue(nam, item)
 				}
+			}
+		}
+	}
+	return set
+}
+
+func SetFromReflectMap(tp reflect.Type, vl reflect.Value) Seter {
+	set := BuildSet()
+	if keys := vl.MapKeys(); keys != nil {
+		for _, key := range keys {
+			nam := key.String()
+			if val := vl.MapIndex(key); val.CanInterface() {
+				set.SetValue(nam, val.Interface())
 			}
 		}
 	}
