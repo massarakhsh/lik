@@ -6,18 +6,74 @@ import (
 	"github.com/massarakhsh/lik"
 )
 
-type TP struct {
-	Name   string
-	Format string
-	Lst    []string
+func main() {
+	test1()
+	test2()
+	test3()
+	test4()
 }
 
-func main() {
-	data := TP{Name: "Имя", Format: "Форма"}
-	data.Lst = []string{"Раз", "Два"}
+type TP1 struct {
+	Name   string
+	Format string
+	Number int
+	LogT   bool
+	LogF   bool
+}
+
+func test1() {
+	data := TP1{Name: "Имя", Format: "Форма", Number: 13, LogT: true, LogF: false}
 	set := lik.BuildSet(data)
-	fmt.Println(set.Serialize())
-	data1 := lik.SetToStruct[TP](set)
-	_ = data1
-	fmt.Println("Ok")
+	if data1 := lik.SetToType[TP1](set); data1 == data {
+		fmt.Println("Test1: Ok")
+	} else {
+		fmt.Println("ERROR for Test1")
+	}
+}
+
+type TP2 struct {
+	Infa []string
+}
+
+func test2() {
+	data := TP2{Infa: []string{"Фамилия", "Имя", "Отчество"}}
+	set := lik.BuildSet(data)
+	if data1 := lik.SetToType[TP2](set); fmt.Sprint(data1) == fmt.Sprint(data) {
+		fmt.Println("Test2: Ok")
+	} else {
+		fmt.Println("ERROR for Test2")
+	}
+}
+
+type TP3 struct {
+	Infa []TP1
+}
+
+func test3() {
+	data := TP3{}
+	data.Infa = append(data.Infa, TP1{Name: "Имя"})
+	data.Infa = append(data.Infa, TP1{Format: "Форм"})
+	set := lik.BuildSet(data)
+	if data1 := lik.SetToType[TP3](set); fmt.Sprint(data1) == fmt.Sprint(data) {
+		fmt.Println("Test3: Ok")
+	} else {
+		fmt.Println("ERROR for Test3")
+	}
+}
+
+type TP4 struct {
+	Infa map[string]TP1
+}
+
+func test4() {
+	data := TP4{}
+	data.Infa = make(map[string]TP1)
+	data.Infa["one"] = TP1{Name: "Имя"}
+	data.Infa["two"] = TP1{Format: "Форм"}
+	set := lik.BuildSet(data)
+	if data1 := lik.SetToType[TP4](set); fmt.Sprint(data1) == fmt.Sprint(data) {
+		fmt.Println("Test4: Ok")
+	} else {
+		fmt.Println("ERROR for Test4")
+	}
 }
