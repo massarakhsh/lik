@@ -39,21 +39,17 @@ func item_to_reflect(item Itemer, tp reflect.Type, vl reflect.Value) bool {
 	if stp := tp.Kind().String(); stp == "ptr" {
 		return item_to_reflect(item, tp.Elem(), vl.Elem())
 	} else if stp == "string" {
-		vl.Set(reflect.ValueOf(item.ToString()))
+		if val := reflect.ValueOf(item.ToString()); val.CanConvert(tp) {
+			vl.Set(val.Convert(tp))
+		}
 	} else if stp == "bool" {
-		vl.Set(reflect.ValueOf(item.ToBool()))
-	} else if stp == "int" {
-		vl.Set(reflect.ValueOf(int(item.ToInt())))
-	} else if stp == "uint" {
-		vl.Set(reflect.ValueOf(uint(item.ToInt())))
-	} else if stp == "int32" {
-		vl.Set(reflect.ValueOf(int32(item.ToInt())))
-	} else if stp == "uint32" {
-		vl.Set(reflect.ValueOf(uint32(item.ToInt())))
-	} else if stp == "int64" {
-		vl.Set(reflect.ValueOf(item.ToInt()))
-	} else if stp == "uint64" {
-		vl.Set(reflect.ValueOf(uint64(item.ToInt())))
+		if val := reflect.ValueOf(item.ToBool()); val.CanConvert(tp) {
+			vl.Set(val.Convert(tp))
+		}
+	} else if stp == "int" || stp == "uint" || stp == "int32" || stp == "uint32" || stp == "int64" || stp == "uint64" {
+		if val := reflect.ValueOf(item.ToInt()); val.CanConvert(tp) {
+			vl.Set(val.Convert(tp))
+		}
 	} else if stp == "struct" {
 		result = set_to_struct(item.ToSet(), tp, vl)
 	} else if stp == "map" {
