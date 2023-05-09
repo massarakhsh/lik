@@ -62,6 +62,9 @@ type SetElm struct {
 // Создание динамического элемента из параметра
 // Тип элемента определяется типом параметра
 func BuildItem(data interface{}) Itemer {
+	if data == nil {
+		return nil
+	}
 	var item Itemer
 	switch val := data.(type) {
 	case DItemBool:
