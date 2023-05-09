@@ -36,6 +36,7 @@ func item_to_reflect(item Itemer, tp reflect.Type, vl reflect.Value) bool {
 		return false
 	}
 	result := true
+
 	if stp := tp.Kind().String(); stp == "ptr" {
 		return item_to_reflect(item, tp.Elem(), vl.Elem())
 	} else if stp == "string" {
@@ -56,6 +57,10 @@ func item_to_reflect(item Itemer, tp reflect.Type, vl reflect.Value) bool {
 		result = set_to_map(item.ToSet(), tp, vl)
 	} else if stp == "slice" {
 		result = list_to_slice(item.ToList(), tp, vl)
+	} else {
+		if val := reflect.ValueOf(item); val.CanConvert(tp) {
+			vl.Set(val.Convert(tp))
+		}
 	}
 	return result
 }
