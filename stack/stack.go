@@ -20,11 +20,11 @@ type ItStack struct {
 	Parms          lik.Seter
 	Info           lik.Seter
 	InPath         string
-	IdSession      int
 	Authentication string
 
 	Dom        likdom.Domer
 	Json       lik.Seter
+	CookiesIn  map[string]string
 	CookiesOut map[string]string
 }
 
@@ -83,13 +83,10 @@ func (it *ItStack) AddCookie(name string, value string) {
 }
 
 func (it *ItStack) loadCookies(r *http.Request) {
+	it.CookiesIn = make(map[string]string)
 	it.CookiesOut = make(map[string]string)
 	for _, cookie := range r.Cookies() {
-		if cookie.Name == "token" {
-			it.Authentication = cookie.Value
-		} else if it.IdSession == 0 && cookie.Name == "id" {
-			it.IdSession = lik.StrToInt(cookie.Value)
-		}
+		it.CookiesIn[cookie.Name] = cookie.Value
 	}
 }
 
