@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"reflect"
+	"regexp"
 	"strings"
 )
 
@@ -194,8 +195,15 @@ func SetFromReflectSlice(tp reflect.Type, vl reflect.Value) Lister {
 }
 
 func ToSnakeCase(name string) string {
-	snakeCase := strings.ToLower(name[:1]) + strings.ReplaceAll(name[1:], "A", "_a")
-	return snakeCase
+	re := regexp.MustCompile(`[A-Z]`)
+	snake := re.ReplaceAllStringFunc(name, func(s string) string {
+		return "_" + strings.ToLower(s)
+	})
+	if strings.HasPrefix(snake, "_") {
+		return snake[1:]
+	} else {
+		return snake
+	}
 }
 
 func (it *DItemBool) IsBool() bool {
