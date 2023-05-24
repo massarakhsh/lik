@@ -334,6 +334,30 @@ func CompareVersion(ver1 string, ver2 string) int {
 	return cp
 }
 
+func ToSnakeCase(name string) string {
+	re := regexp.MustCompile(`[A-Z]`)
+	snake := re.ReplaceAllStringFunc(name, func(s string) string {
+		return "_" + strings.ToLower(s)
+	})
+	if strings.HasPrefix(snake, "_") {
+		return snake[1:]
+	} else {
+		return snake
+	}
+}
+
+func FromSnakeCase(name string) string {
+	if name != "" {
+		re := regexp.MustCompile(`_[a-z]`)
+		unsnake := re.ReplaceAllStringFunc(name[1:], func(s string) string {
+			return strings.ToUpper(s[1:])
+		})
+		return strings.ToUpper(name[:1]) + unsnake
+	} else {
+		return ""
+	}
+}
+
 // RuTransiltMap описывает замены русских букв на английские при транслитерации. Некоторые буквы
 // заменяются ни на одну, а на две или три буквы латинского алфавита. А мягкий знак вообще исчезает.
 // Но такова обычная распространенная схема транслитерации.
