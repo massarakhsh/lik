@@ -7,10 +7,11 @@ import (
 )
 
 func main() {
-	test1()
-	test2()
-	test3()
-	test4()
+	// test1()
+	// test2()
+	// test3()
+	// test4()
+	test5()
 }
 
 type TP1 struct {
@@ -75,5 +76,27 @@ func test4() {
 		fmt.Println("Test4: Ok")
 	} else {
 		fmt.Println("ERROR for Test4")
+	}
+}
+
+type TP5 struct {
+	Beta string
+	TP5a
+}
+
+type TP5a struct {
+	Alpha string
+}
+
+func test5() {
+	data := TP5{}
+	data.Alpha = "Альфа"
+	data.Beta = "Бета"
+	set := lik.BuildSet(data)
+	fmt.Println(set.Format(""))
+	if data1 := lik.SetToType[TP5](set); fmt.Sprint(data1) == fmt.Sprint(data) {
+		fmt.Println("Test5: Ok")
+	} else {
+		fmt.Println("ERROR for Test5")
 	}
 }

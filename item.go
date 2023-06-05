@@ -128,7 +128,7 @@ func BuildItem(data interface{}) Itemer {
 		} else if tps == "map" {
 			item = SetFromReflectMap(tp, vl)
 		} else if tps == "slice" {
-			item = SetFromReflectSlice(tp, vl)
+			item = ListFromReflectSlice(tp, vl)
 		} else {
 			//fmt.Println("BuildItem ERROR: ", data)
 		}
@@ -152,35 +152,18 @@ func BuildItemReflect(val reflect.Value) Itemer {
 }
 
 func SetFromReflectStructure(tp reflect.Type, vl reflect.Value) Seter {
-	set := BuildSet()
-	cnt := vl.NumField()
-	for f := 0; f < cnt; f++ {
-		nam := ToSnakeCase(tp.Field(f).Name)
-		if val := vl.Field(f); val.IsValid() {
-			if !val.IsZero() {
-				if item := BuildItemReflect(val); item != nil {
-					set.SetValue(nam, item)
-				}
-			}
-		}
-	}
+	set := &DItemSet{}
+	set.setFromReflectStructure(tp, vl)
 	return set
 }
 
 func SetFromReflectMap(tp reflect.Type, vl reflect.Value) Seter {
-	set := BuildSet()
-	if keys := vl.MapKeys(); keys != nil {
-		for _, key := range keys {
-			nam := key.String()
-			if val := vl.MapIndex(key); val.CanInterface() {
-				set.SetValue(nam, val.Interface())
-			}
-		}
-	}
+	set := &DItemSet{}
+	set.setFromReflectMap(tp, vl)
 	return set
 }
 
-func SetFromReflectSlice(tp reflect.Type, vl reflect.Value) Lister {
+func ListFromReflectSlice(tp reflect.Type, vl reflect.Value) Lister {
 	list := BuildList()
 	cnt := vl.Len()
 	for n := 0; n < cnt; n++ {

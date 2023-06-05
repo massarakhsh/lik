@@ -1,6 +1,7 @@
 package lik
 
 import (
+	"reflect"
 	"sort"
 	"strings"
 )
@@ -347,6 +348,36 @@ func (it *DItemSet) Merge(set Seter) {
 				}
 			} else {
 				it.SetValue(pair.Key, val)
+			}
+		}
+	}
+}
+
+func (it *DItemSet) setFromReflectStructure(tp reflect.Type, vl reflect.Value) {
+	cnt := vl.NumField()
+	for f := 0; f < cnt; f++ {
+		tpf := tp.Field(f)
+		if val := vl.Field(f); val.IsValid() {
+			if !val.IsZero() {
+				if item := BuildItemReflect(val); item != nil {
+					if !tpf.Anonymous {
+						nam := ToSnakeCase(tpf.Name)
+						it.SetValue(nam, item)
+					} else if set := item.ToSet(); set != nil {
+						it.Merge(set)
+					}
+				}
+			}
+		}
+	}
+}
+
+func (it *DItemSet) setFromReflectMap(tp reflect.Type, vl reflect.Value) {
+	if keys := vl.MapKeys(); keys != nil {
+		for _, key := range keys {
+			nam := key.String()
+			if val := vl.MapIndex(key); val.CanInterface() {
+				it.SetValue(nam, val.Interface())
 			}
 		}
 	}

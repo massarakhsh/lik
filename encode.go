@@ -72,14 +72,15 @@ func set_to_struct(set Seter, tp reflect.Type, vl reflect.Value) bool {
 	result := true
 	cnt := vl.NumField()
 	for f := 0; f < cnt; f++ {
-		name := tp.Field(f).Name
-		item := set.GetItem(name)
-		if item == nil {
-			nm := ToSnakeCase(name)
-			item = set.GetItem(nm)
+		tpf := tp.Field(f)
+		var item Itemer
+		if tpf.Anonymous {
+			item = set
+		} else if item = set.GetItem(tpf.Name); item == nil {
+			item = set.GetItem(ToSnakeCase(tpf.Name))
 		}
 		if item != nil {
-			if !item_to_reflect(item, tp.Field(f).Type, vl.Field(f)) {
+			if !item_to_reflect(item, tpf.Type, vl.Field(f)) {
 				result = false
 			}
 		}
