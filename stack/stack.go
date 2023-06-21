@@ -16,6 +16,7 @@ type ItStack struct {
 	IP             string
 	Host           string
 	Port           int
+	Root           string
 	Path           []string
 	Parms          lik.Seter
 	Info           lik.Seter
@@ -28,7 +29,7 @@ type ItStack struct {
 	CookiesOut map[string]string
 }
 
-func BuildRequest(r *http.Request) *ItStack {
+func BuildStack(r *http.Request, root string) *ItStack {
 	it := &ItStack{}
 	it.Parms = lik.BuildSet()
 	it.loadHost(r)
@@ -37,6 +38,10 @@ func BuildRequest(r *http.Request) *ItStack {
 	it.loadAuth(r)
 	it.loadInfo(r)
 	return it
+}
+
+func BuildRequest(r *http.Request) *ItStack {
+	return BuildStack(r, "")
 }
 
 func BuildMethodPath(method, path string) *ItStack {
