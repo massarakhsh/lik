@@ -40,6 +40,7 @@ func Say(lev Level, format string, parms ...interface{}) {
 		at := time.Now().Format("2006-01-02T15:04:05.000")
 		text := fmt.Sprintf(format, parms...)
 		if LogJson {
+			//fmt.Printf("%s: %s\n", at, text)
 			set := lik.BuildSet("at", at, "text", text)
 			fmt.Printf("%s\n", set.Serialize())
 		} else {
