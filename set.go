@@ -93,13 +93,30 @@ func (it *DItemSet) clone() Itemer {
 
 func (it *DItemSet) serialize() string {
 	var text = "{"
-	for n, set := range it.Values() {
+	for _, set := range it.Values() {
 		if set.Key != "" && set.Val != nil {
-			if n > 0 {
+			if len(text) > 1 {
 				text += ","
 			}
 			text += StrToQuotes(set.Key) + ":"
 			text += set.Val.Serialize()
+		}
+	}
+	text += "}"
+	return text
+}
+
+func (it *DItemSet) sort_serialize() string {
+	var text = "{"
+	keys := it.SortKeys()
+	for _, key := range keys {
+		val := it.GetItem(key)
+		if key != "" && val != nil {
+			if len(text) > 1 {
+				text += ","
+			}
+			text += StrToQuotes(key) + ":"
+			text += val.SortSerialize()
 		}
 	}
 	text += "}"

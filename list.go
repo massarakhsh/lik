@@ -1,5 +1,7 @@
 package lik
 
+import "sort"
+
 // Интерфейс динамических списков
 type Lister interface {
 	Itemer
@@ -57,6 +59,24 @@ func (it *DItemList) serialize() string {
 			text += ","
 		}
 		text += val.Serialize()
+	}
+	text += "]"
+	return text
+}
+
+func (it *DItemList) sort_serialize() string {
+	sz := it.Count()
+	lst := make([]string, sz)
+	for n, val := range it.Val {
+		lst[n] = val.SortSerialize()
+	}
+	sort.Strings(lst)
+	var text = "["
+	for n, val := range lst {
+		if n > 0 {
+			text += ","
+		}
+		text += val
 	}
 	text += "]"
 	return text

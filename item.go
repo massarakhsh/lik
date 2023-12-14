@@ -24,6 +24,7 @@ type Itemer interface {
 	ToList() Lister
 	ToSet() Seter
 	Serialize() string
+	SortSerialize() string
 	Format(prefix string) string
 	Clone() Itemer
 }
@@ -485,6 +486,25 @@ func (it *DItemList) Format(prefix string) string {
 }
 func (it *DItemSet) Format(prefix string) string {
 	return it.format(prefix)
+}
+
+func (it *DItemBool) SortSerialize() string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemInt) SortSerialize() string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemFloat) SortSerialize() string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemString) SortSerialize() string {
+	return StrToQuotes(it.Val)
+}
+func (it *DItemList) SortSerialize() string {
+	return it.sort_serialize()
+}
+func (it *DItemSet) SortSerialize() string {
+	return it.sort_serialize()
 }
 
 /////////////////////////////////////////////
