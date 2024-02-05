@@ -32,6 +32,17 @@ func GetSession(id int) ItSession {
 	return session
 }
 
+func GetAllSessions() []ItSession {
+	purgeSessions()
+	var list []ItSession
+	sessionGate.Lock()
+	for _, sess := range sessionMap {
+		list = append(list, sess.session)
+	}
+	sessionGate.Unlock()
+	return list
+}
+
 func CreateSession(session ItSession) int {
 	purgeSessions()
 	sessionGate.Lock()
