@@ -336,7 +336,7 @@ func (it *DItemSet) Keys() []string {
 
 func (it *DItemSet) SortKeys() []string {
 	keys := it.Keys()
-	sort.SliceStable(keys, func(i, j int) bool { return keys[i] < keys[j] })
+	sort.Slice(keys, func(i, j int) bool { return keys[i] < keys[j] })
 	return keys
 }
 
