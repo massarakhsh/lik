@@ -1,16 +1,16 @@
 package lik
 
-func CompareItems(itema Itemer, itemb Itemer) bool {
+func IsEqualItems(itema Itemer, itemb Itemer) bool {
 	if itema == nil && itemb == nil {
 		return true
 	} else if itema == nil || itemb == nil {
 		return false
 	} else if itema.IsSet() && itemb.IsSet() {
-		return CompareSets(itema.ToSet(), itemb.ToSet())
+		return IsEqualSets(itema.ToSet(), itemb.ToSet())
 	} else if itema.IsSet() || itemb.IsSet() {
 		return false
 	} else if itema.IsList() && itemb.IsList() {
-		return CompareLists(itema.ToList(), itemb.ToList())
+		return IsEqualLists(itema.ToList(), itemb.ToList())
 	} else if itema.IsList() || itemb.IsList() {
 		return false
 	} else {
@@ -18,7 +18,7 @@ func CompareItems(itema Itemer, itemb Itemer) bool {
 	}
 }
 
-func CompareSets(seta Seter, setb Seter) bool {
+func IsEqualSets(seta Seter, setb Seter) bool {
 	if seta == nil && setb == nil {
 		return true
 	} else if seta == nil || setb == nil {
@@ -29,15 +29,15 @@ func CompareSets(seta Seter, setb Seter) bool {
 		for k, key := range keysa {
 			if keyb := keysb[k]; keyb != key {
 				return false
-			} else if vala, valb := seta.GetItem(key), setb.GetItem(keyb); !CompareItems(vala, valb) {
+			} else if vala, valb := seta.GetItem(key), setb.GetItem(keyb); !IsEqualItems(vala, valb) {
 				return false
 			}
 		}
+		return true
 	}
-	return true
 }
 
-func CompareLists(lista Lister, listb Lister) bool {
+func IsEqualLists(lista Lister, listb Lister) bool {
 	if lista == nil && listb == nil {
 		return true
 	} else if lista == nil || listb == nil {
@@ -46,10 +46,10 @@ func CompareLists(lista Lister, listb Lister) bool {
 		return false
 	} else {
 		for k := 0; k < lena; k++ {
-			if vala, valb := lista.GetItem(k), listb.GetItem(k); !CompareItems(vala, valb) {
+			if vala, valb := lista.GetItem(k), listb.GetItem(k); !IsEqualItems(vala, valb) {
 				return false
 			}
 		}
+		return true
 	}
-	return true
 }
