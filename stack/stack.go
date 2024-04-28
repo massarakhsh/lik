@@ -29,19 +29,20 @@ type ItStack struct {
 	CookiesOut map[string]string
 }
 
-func BuildStack(r *http.Request, root string) *ItStack {
+func BuildStack(r *http.Request) *ItStack {
 	it := &ItStack{}
 	it.Parms = lik.BuildSet()
 	it.loadHost(r)
 	it.loadPath(r.RequestURI)
 	it.loadCookies(r)
 	it.loadAuth(r)
-	it.loadInfo(r)
 	return it
 }
 
 func BuildRequest(r *http.Request) *ItStack {
-	return BuildStack(r, "")
+	stack := BuildStack(r)
+	stack.loadInfo(r)
+	return stack
 }
 
 func BuildMethodPath(method, path string) *ItStack {
