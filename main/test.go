@@ -11,7 +11,8 @@ func main() {
 	// test2()
 	// test3()
 	// test4()
-	test5()
+	// test5()
+	testHtml()
 }
 
 type TP1 struct {
@@ -99,4 +100,7 @@ func test5() {
 	} else {
 		fmt.Println("ERROR for Test5")
 	}
+}
+
+func testHtml() {
 }
