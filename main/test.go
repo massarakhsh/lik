@@ -103,4 +103,10 @@ func test5() {
 }
 
 func testHtml() {
+	item := lik.BuildDomer("div", "class=line", "onclick", "proc()")
+	// elm := lik.BuildDomer("B", "code=17")
+	// elm.SetValue("__text", "Привет, Мир!")
+	item.SetAttrs("inside", 17)
+	text := item.ToString()
+	fmt.Println(text)
 }
