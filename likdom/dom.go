@@ -1,23 +1,25 @@
 package likdom
 
 import (
-	"regexp"
 	"strings"
+
+	"github.com/massarakhsh/lik"
 )
 
-type LikDom struct {
-	Tag    string
-	Unpair bool
-	Attr   map[string]string
-	Text   string
-	Data   []Domer
+type likDom struct {
+	tag      string
+	isUnpair bool
+	attrs    lik.DItemSet
+	text     string
+	content  []*likDom
 }
 
 type Domer interface {
+	GetSelf() *likDom
 	GetTag() string
 	IsAttr(key string) bool
 	GetAttr(key string) string
-	SetAttr(attr ...string) Domer
+	SetAttr(attrs ...interface{})
 	ToString() string
 	ToPrefixString(prefix string) string
 	GetDataCount() int
@@ -26,51 +28,51 @@ type Domer interface {
 	AppendItem(items ...Domer)
 	BuildSpace() Domer
 	BuildString(text ...string)
-	BuildItem(tag string, attr ...string) Domer
-	BuildItemClass(tag string, class string, attr ...string) Domer
-	BuildUnpairItem(tag string, attr ...string) Domer
-	BuildTable(attr ...string) Domer
-	BuildTableClass(class string, attr ...string) Domer
-	BuildTr(attr ...string) Domer
-	BuildTrClass(class string, attr ...string) Domer
-	BuildTd(attr ...string) Domer
-	BuildTdClass(class string, attr ...string) Domer
-	BuildTrTd(attr ...string) Domer
-	BuildTrTdClass(class string, attr ...string) Domer
-	BuildDiv(attr ...string) Domer
-	BuildDivClass(class string, attr ...string) Domer
-	BuildTextClassProc(text string, class string, proc string, attr ...string) Domer
+	BuildItem(tag string, attrs ...interface{}) Domer
+	BuildItemClass(tag string, class string, attrs ...interface{}) Domer
+	BuildUnpairItem(tag string, attrs ...interface{}) Domer
+	BuildTable(attrs ...interface{}) Domer
+	BuildTableClass(class string, attrs ...interface{}) Domer
+	BuildTr(attrs ...interface{}) Domer
+	BuildTrClass(class string, attrs ...interface{}) Domer
+	BuildTd(attrs ...interface{}) Domer
+	BuildTdClass(class string, attrs ...interface{}) Domer
+	BuildTrTd(attrs ...interface{}) Domer
+	BuildTrTdClass(class string, attrs ...interface{}) Domer
+	BuildDiv(attrs ...interface{}) Domer
+	BuildDivClass(class string, attrs ...interface{}) Domer
 }
 
 func BuildSpace() Domer {
-	dom := &LikDom{Attr: make(map[string]string)}
+	dom := &likDom{}
 	return dom
 }
 
 func BuildString(text string) Domer {
-	dom := &LikDom{Attr: make(map[string]string), Text: text}
+	dom := &likDom{}
+	dom.text = text
 	return dom
 }
 
-func BuildItem(tag string, attr ...string) Domer {
-	dom := &LikDom{Tag: tag, Attr: make(map[string]string)}
-	dom.SetAttr(attr...)
+func BuildItem(tag string, attrs ...interface{}) Domer {
+	dom := &likDom{tag: tag}
+	dom.SetAttr(attrs...)
 	return dom
 }
 
-func BuildItemClass(tag string, class string, attr ...string) Domer {
-	item := &LikDom{Tag: tag, Attr: make(map[string]string)}
+func BuildUnpairItem(tag string, attrs ...interface{}) Domer {
+	dom := &likDom{tag: tag, isUnpair: true}
+	dom.SetAttr(attrs...)
+	return dom
+}
+
+func BuildItemClass(tag string, class string, attrs ...interface{}) Domer {
+	dom := &likDom{tag: tag}
+	dom.SetAttr(attrs...)
 	if class != "" {
-		item.SetAttr("class", class)
+		dom.SetAttr("class", class)
 	}
-	item.SetAttr(attr...)
-	return item
-}
-
-func BuildUnpairItem(tag string, attr ...string) Domer {
-	item := &LikDom{Tag: tag, Unpair: true, Attr: make(map[string]string)}
-	item.SetAttr(attr...)
-	return item
+	return dom
 }
 
 func BuildPageHtml() Domer {
@@ -80,140 +82,158 @@ func BuildPageHtml() Domer {
 	return item
 }
 
-func BuildDiv(attr ...string) Domer {
-	return BuildItem("div", attr...)
+func BuildDiv(attrs ...interface{}) Domer {
+	return BuildItem("div", attrs...)
 }
-func BuildDivClass(class string, attr ...string) Domer {
-	return BuildItemClass("div", class, attr...)
+func BuildDivClass(class string, attrs ...interface{}) Domer {
+	return BuildItemClass("div", class, attrs...)
 }
-func BuildDivClassId(class string, id string, attr ...string) Domer {
-	item := BuildDivClass(class, attr...)
+func BuildDivClassId(class string, id string, attrs ...interface{}) Domer {
+	item := BuildDivClass(class, attrs...)
 	if id != "" {
 		item.SetAttr("id", id)
 	}
 	return item
 }
 
-func BuildTable(attr ...string) Domer {
-	return BuildItem("table", attr...)
+func BuildTable(attrs ...interface{}) Domer {
+	return BuildItem("table", attrs...)
 }
-func BuildTableClass(class string, attr ...string) Domer {
-	return BuildItemClass("table", class, attr...)
+func BuildTableClass(class string, attrs ...interface{}) Domer {
+	return BuildItemClass("table", class, attrs...)
 }
-func BuildTableClassId(class string, id string, attr ...string) Domer {
-	item := BuildTableClass(class, attr...)
+func BuildTableClassId(class string, id string, attrs ...interface{}) Domer {
+	item := BuildTableClass(class, attrs...)
 	if id != "" {
 		item.SetAttr("id", id)
 	}
 	return item
 }
 
-func BuildImgProc(class string, id string, proc string, img string, title string) Domer {
-	item := BuildUnpairItem("img", "src", img)
-	if class != "" {
-		item.SetAttr("class", class)
-	}
-	if id != "" {
-		item.SetAttr("id", id)
-	}
-	if proc != "" {
-		item.SetAttr("onclick", proc)
-	}
-	if title != "" {
-		item.SetAttr("title", title)
-	}
-	return item
-}
-
-func (dom *LikDom) GetTag() string {
-	return dom.Tag
-}
-
-func (dom *LikDom) IsAttr(key string) bool {
-	_, ok := dom.Attr[key]
-	return ok
-}
-
-func (dom *LikDom) GetAttr(key string) string {
-	val := dom.Attr[key]
-	return val
-}
-
-func (dom *LikDom) SetAttr(attr ...string) Domer {
-	for na := 0; na < len(attr); na++ {
-		key := attr[na]
-		val := ""
-		if match := regexp.MustCompile("^(.+?)=(.*)").FindStringSubmatch(key); match != nil {
-			key = match[1]
-			val = match[2]
-		} else if na+1 < len(attr) {
-			na++
-			val = attr[na]
-		}
-		if len(key) > 0 {
-			val = strings.Trim(val, "'\"")
-			dom.Attr[key] = val
-		} else if len(val) > 0 {
-			dom.Attr[val] = ""
-		}
-	}
+func (dom *likDom) GetSelf() *likDom {
 	return dom
 }
 
-func (dom *LikDom) AppendItem(items ...Domer) {
+func (dom *likDom) GetTag() string {
+	return dom.tag
+}
+
+func (dom *likDom) IsAttr(key string) bool {
+	return dom.attrs.IsItem(key)
+}
+
+func (dom *likDom) GetAttr(key string) string {
+	return dom.attrs.GetString(key)
+}
+
+func (dom *likDom) SetAttr(attrs ...interface{}) {
+	dom.attrs.SetValues(attrs...)
+}
+
+func (dom *likDom) AppendItem(items ...Domer) {
 	for _, item := range items {
 		if item != nil {
-			dom.Data = append(dom.Data, item)
+			dom.content = append(dom.content, item.GetSelf())
 		}
 	}
 }
 
-func (dom *LikDom) BuildItem(tag string, attr ...string) Domer {
-	item := BuildItem(tag, attr...)
+func (dom *likDom) BuildItem(tag string, attrs ...interface{}) Domer {
+	item := BuildItem(tag, attrs...)
 	dom.AppendItem(item)
 	return item
 }
 
-func (dom *LikDom) BuildItemClass(tag string, class string, attr ...string) Domer {
-	item := BuildItemClass(tag, class, attr...)
+func (dom *likDom) BuildItemClass(tag string, class string, attrs ...interface{}) Domer {
+	item := BuildItemClass(tag, class, attrs...)
 	dom.AppendItem(item)
 	return item
 }
 
-func (dom *LikDom) BuildUnpairItem(tag string, attr ...string) Domer {
-	item := BuildUnpairItem(tag, attr...)
+func (dom *likDom) BuildUnpairItem(tag string, attrs ...interface{}) Domer {
+	item := BuildUnpairItem(tag, attrs...)
 	dom.AppendItem(item)
 	return item
 }
 
-func (dom *LikDom) BuildString(text ...string) {
+func (dom *likDom) BuildString(text ...string) {
 	for _, txt := range text {
 		item := BuildString(txt)
 		dom.AppendItem(item)
 	}
 }
 
-func (dom *LikDom) BuildSpace() Domer {
+func (dom *likDom) BuildSpace() Domer {
 	item := BuildSpace()
 	dom.AppendItem(item)
 	return item
 }
 
-func (dom *LikDom) GetDataCount() int {
-	return len(dom.Data)
+func (dom *likDom) BuildTable(attrs ...interface{}) Domer {
+	return dom.BuildItem("table", attrs...)
 }
 
-func (dom *LikDom) GetDataItem(num int) (Domer, bool) {
-	if num >= 0 && num < len(dom.Data) {
-		elm := dom.Data[num]
+func (dom *likDom) BuildTableClass(class string, attrs ...interface{}) Domer {
+	return dom.BuildTagClass("table", class, attrs...)
+}
+
+func (dom *likDom) BuildTr(attrs ...interface{}) Domer {
+	return dom.BuildItem("tr", attrs...)
+}
+
+func (dom *likDom) BuildTrClass(class string, attrs ...interface{}) Domer {
+	return dom.BuildTagClass("tr", class, attrs...)
+}
+
+func (dom *likDom) BuildTd(attrs ...interface{}) Domer {
+	return dom.BuildItem("td", attrs...)
+}
+
+func (dom *likDom) BuildTdClass(class string, attrs ...interface{}) Domer {
+	return dom.BuildTagClass("td", class, attrs...)
+}
+
+func (dom *likDom) BuildTrTd(attrs ...interface{}) Domer {
+	return dom.BuildItem("tr").BuildItem("td", attrs...)
+}
+
+func (dom *likDom) BuildTrTdClass(class string, attrs ...interface{}) Domer {
+	td := dom.BuildTrTd(attrs...)
+	td.SetAttr("class", class)
+	return td
+}
+
+func (dom *likDom) BuildDiv(attrs ...interface{}) Domer {
+	return dom.BuildItem("div", attrs...)
+}
+
+func (dom *likDom) BuildDivClass(class string, attrs ...interface{}) Domer {
+	return dom.BuildTagClass("div", class, attrs...)
+}
+
+func (dom *likDom) BuildTagClass(tag string, class string, attrs ...interface{}) Domer {
+	item := dom.BuildItem(tag, attrs...)
+	if class != "" {
+		item.SetAttr("class", class)
+	}
+	return item
+}
+
+func (dom *likDom) GetDataCount() int {
+	return len(dom.content)
+}
+
+func (dom *likDom) GetDataItem(num int) (Domer, bool) {
+	if num >= 0 && num < len(dom.content) {
+		elm := dom.content[num]
 		return elm, true
 	}
 	return nil, false
 }
 
-func (dom *LikDom) GetDataTag(tag string) (Domer, bool) {
-	for n := 0; n < len(dom.Data); n++ {
-		item := dom.Data[n]
+func (dom *likDom) GetDataTag(tag string) (Domer, bool) {
+	for n := 0; n < len(dom.content); n++ {
+		item := dom.content[n]
 		if item != nil && item.GetTag() == tag {
 			return item, true
 		}
@@ -221,21 +241,21 @@ func (dom *LikDom) GetDataTag(tag string) (Domer, bool) {
 	return nil, false
 }
 
-func (dom *LikDom) ToString() string {
+func (dom *likDom) ToString() string {
 	code := ""
-	if dom.Tag != "" {
-		if dom.Tag == "html" {
+	if dom.tag != "" {
+		if dom.tag == "html" {
 			code += "<!DOCTYPE html>\n"
 		}
-		tag := dom.Tag
+		tag := dom.tag
 		tags := tag
-		if dom.Text != "" {
-			tags += " " + dom.Text
+		if dom.text != "" {
+			tags += " " + dom.text
 		}
-		for key, val := range dom.Attr {
+		for _, set := range dom.attrs.Values() {
 			tags += " "
-			tags += key
-			if val != "" {
+			tags += set.Key
+			if val := set.Val.ToString(); val != "" {
 				qval := strings.Replace(val, "\\", "\\\\", -1)
 				qval = strings.Replace(qval, "\"", "\\\"", -1)
 				qval = strings.Replace(qval, "\n", "\\n", -1)
@@ -243,18 +263,18 @@ func (dom *LikDom) ToString() string {
 			}
 		}
 		code += "<" + tags + ">"
-		if !dom.Unpair {
-			for _, item := range dom.Data {
+		if !dom.isUnpair {
+			for _, item := range dom.content {
 				if item != nil {
 					code += item.ToString()
 				}
 			}
 			code += "</" + tag + ">"
 		}
-	} else if dom.Text != "" {
-		code += dom.Text
+	} else if dom.text != "" {
+		code += dom.text
 	} else {
-		for _, item := range dom.Data {
+		for _, item := range dom.content {
 			if item != nil {
 				code += item.ToString()
 			}
@@ -263,20 +283,20 @@ func (dom *LikDom) ToString() string {
 	return code
 }
 
-func (dom *LikDom) ToPrefixString(prefix string) string {
+func (dom *likDom) ToPrefixString(prefix string) string {
 	code := ""
-	if dom.Tag != "" {
-		if prefix == "" && dom.Tag == "html" {
+	if dom.tag != "" {
+		if prefix == "" && dom.tag == "html" {
 			code += "<!DOCTYPE html>\n"
 		}
-		tag := dom.Tag
+		tag := dom.tag
 		tags := tag
-		if dom.Text != "" {
-			tags += " " + dom.Text
+		if dom.text != "" {
+			tags += " " + dom.text
 		}
-		for key, val := range dom.Attr {
-			tags += " " + key
-			if val != "" {
+		for _, set := range dom.attrs.Values() {
+			tags += " " + set.Key
+			if val := set.Val.ToString(); val != "" {
 				qval := strings.Replace(val, "\\", "\\\\", -1)
 				qval = strings.Replace(qval, "\"", "\\\"", -1)
 				qval = strings.Replace(qval, "\n", "\\n", -1)
@@ -284,10 +304,10 @@ func (dom *LikDom) ToPrefixString(prefix string) string {
 			}
 		}
 		code += prefix + "<" + tags + ">"
-		if dom.Unpair {
+		if dom.isUnpair {
 			code += "\n"
 		} else if strings.ToLower(tag) == "textarea" {
-			for _, item := range dom.Data {
+			for _, item := range dom.content {
 				if item != nil {
 					code += item.ToString()
 				}
@@ -295,86 +315,21 @@ func (dom *LikDom) ToPrefixString(prefix string) string {
 			code += "</" + tag + ">\n"
 		} else {
 			code += "\n"
-			for _, item := range dom.Data {
+			for _, item := range dom.content {
 				if item != nil {
 					code += item.ToPrefixString(prefix + "    ")
 				}
 			}
 			code += prefix + "</" + tag + ">\n"
 		}
-	} else if dom.Text != "" {
-		code += prefix + dom.Text + "\n"
+	} else if dom.text != "" {
+		code += prefix + dom.text + "\n"
 	} else {
-		for _, item := range dom.Data {
+		for _, item := range dom.content {
 			if item != nil {
 				code += item.ToPrefixString(prefix)
 			}
 		}
 	}
 	return code
-}
-
-func (dom *LikDom) BuildTable(attr ...string) Domer {
-	return dom.BuildItem("table", attr...)
-}
-
-func (dom *LikDom) BuildTableClass(class string, attr ...string) Domer {
-	return dom.BuildTagClass("table", class, attr...)
-}
-
-func (dom *LikDom) BuildTr(attr ...string) Domer {
-	return dom.BuildItem("tr", attr...)
-}
-
-func (dom *LikDom) BuildTrClass(class string, attr ...string) Domer {
-	return dom.BuildTagClass("tr", class, attr...)
-}
-
-func (dom *LikDom) BuildTd(attr ...string) Domer {
-	return dom.BuildItem("td", attr...)
-}
-
-func (dom *LikDom) BuildTdClass(class string, attr ...string) Domer {
-	return dom.BuildTagClass("td", class, attr...)
-}
-
-func (dom *LikDom) BuildTrTd(attr ...string) Domer {
-	return dom.BuildItem("tr").BuildItem("td", attr...)
-}
-
-func (dom *LikDom) BuildTrTdClass(class string, attr ...string) Domer {
-	td := dom.BuildTrTd(attr...)
-	td.SetAttr("class", class)
-	return td
-}
-
-func (dom *LikDom) BuildDiv(attr ...string) Domer {
-	return dom.BuildItem("div", attr...)
-}
-
-func (dom *LikDom) BuildDivClass(class string, attr ...string) Domer {
-	return dom.BuildTagClass("div", class, attr...)
-}
-
-func (dom *LikDom) BuildTagClass(tag string, class string, attr ...string) Domer {
-	item := dom.BuildItem(tag, attr...)
-	if class != "" {
-		item.SetAttr("class", class)
-	}
-	return item
-}
-
-func (dom *LikDom) BuildTextClassProc(text string, class string, proc string, attr ...string) Domer {
-	item := dom.BuildItem("a", attr...)
-	if text != "" {
-		item.BuildString(text)
-	}
-	if class != "" {
-		item.SetAttr("class", class)
-	}
-	if proc != "" {
-		item.SetAttr("href", "#")
-		item.SetAttr("onclick", proc)
-	}
-	return item
 }

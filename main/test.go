@@ -7,12 +7,11 @@ import (
 )
 
 func main() {
-	// test1()
-	// test2()
-	// test3()
-	// test4()
-	// test5()
-	testHtml()
+	test1()
+	test2()
+	test3()
+	test4()
+	test5()
 }
 
 type TP1 struct {
@@ -94,19 +93,9 @@ func test5() {
 	data.Alpha = "Альфа"
 	data.Beta = "Бета"
 	set := lik.BuildSet(data)
-	fmt.Println(set.Format(""))
 	if data1 := lik.SetToType[TP5](set); fmt.Sprint(data1) == fmt.Sprint(data) {
 		fmt.Println("Test5: Ok")
 	} else {
 		fmt.Println("ERROR for Test5")
 	}
-}
-
-func testHtml() {
-	item := lik.BuildDomer("div", "class=line", "onclick", "proc()")
-	// elm := lik.BuildDomer("B", "code=17")
-	// elm.SetValue("__text", "Привет, Мир!")
-	item.SetAttrs("inside", 17)
-	text := item.ToString()
-	fmt.Println(text)
 }
