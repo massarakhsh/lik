@@ -72,6 +72,8 @@ func (it *DItemSet) SetValues(vals ...interface{}) {
 			} else if len(key) > 0 && nv+1 < len(vals) {
 				nv++
 				it.SetValue(key, vals[nv])
+			} else if len(key) > 0 {
+				it.SetValue(key, "")
 			}
 		default:
 			if item := BuildItem(vk); item != nil && item.IsSet() {
