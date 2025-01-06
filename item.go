@@ -23,7 +23,7 @@ type Itemer interface {
 	ToString() string
 	ToList() Lister
 	ToSet() Seter
-	Serialize() string
+	Serialize(itf int) string
 	SortSerialize() string
 	Format(prefix string) string
 	Clone() Itemer
@@ -57,6 +57,9 @@ type SetElm struct {
 	Key string
 	Val Itemer
 }
+
+const ITF_JSON = 1
+const ITF_JAVASCRIPT = 2
 
 // Interface Itemer
 
@@ -450,36 +453,36 @@ func (it *DItemSet) Clone() Itemer {
 	return it.clone()
 }
 
-func (it *DItemBool) Serialize() string {
+func (it *DItemBool) Serialize(itf int) string {
 	return fmt.Sprint(it.Val)
 }
-func (it *DItemInt) Serialize() string {
+func (it *DItemInt) Serialize(itf int) string {
 	return fmt.Sprint(it.Val)
 }
-func (it *DItemFloat) Serialize() string {
+func (it *DItemFloat) Serialize(itf int) string {
 	return fmt.Sprint(it.Val)
 }
-func (it *DItemString) Serialize() string {
+func (it *DItemString) Serialize(itf int) string {
 	return StrToQuotes(it.Val)
 }
-func (it *DItemList) Serialize() string {
-	return it.serialize()
+func (it *DItemList) Serialize(itf int) string {
+	return it.serialize(itf)
 }
-func (it *DItemSet) Serialize() string {
-	return it.serialize()
+func (it *DItemSet) Serialize(itf int) string {
+	return it.serialize(itf)
 }
 
 func (it *DItemBool) Format(prefix string) string {
-	return it.Serialize()
+	return it.Serialize(ITF_JSON)
 }
 func (it *DItemInt) Format(prefix string) string {
-	return it.Serialize()
+	return it.Serialize(ITF_JSON)
 }
 func (it *DItemFloat) Format(prefix string) string {
-	return it.Serialize()
+	return it.Serialize(ITF_JSON)
 }
 func (it *DItemString) Format(prefix string) string {
-	return it.Serialize()
+	return it.Serialize(ITF_JSON)
 }
 func (it *DItemList) Format(prefix string) string {
 	return it.format(prefix)

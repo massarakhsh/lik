@@ -52,13 +52,13 @@ func (it *DItemList) clone() Itemer {
 	return cpy
 }
 
-func (it *DItemList) serialize() string {
+func (it *DItemList) serialize(itf int) string {
 	var text = "["
 	for n, val := range it.Val {
 		if n > 0 {
 			text += ","
 		}
-		text += val.Serialize()
+		text += val.Serialize(itf)
 	}
 	text += "]"
 	return text

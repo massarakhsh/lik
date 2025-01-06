@@ -93,15 +93,19 @@ func (it *DItemSet) clone() Itemer {
 	return cpy
 }
 
-func (it *DItemSet) serialize() string {
+func (it *DItemSet) serialize(itf int) string {
 	var text = "{"
 	for _, set := range it.Values() {
 		if set.Key != "" && set.Val != nil {
 			if len(text) > 1 {
 				text += ","
 			}
-			text += StrToQuotes(set.Key) + ":"
-			text += set.Val.Serialize()
+			if itf == ITF_JSON {
+				text += StrToQuotes(set.Key) + ":"
+			} else {
+				text += set.Key + ":"
+			}
+			text += set.Val.Serialize(itf)
 		}
 	}
 	text += "}"
