@@ -58,7 +58,7 @@ func (it *DItemList) serialize(itf int) string {
 		if n > 0 {
 			text += ","
 		}
-		text += val.SerializeAs(itf)
+		text += val.serializeAs(itf)
 	}
 	text += "]"
 	return text

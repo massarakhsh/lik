@@ -24,10 +24,13 @@ type Itemer interface {
 	ToList() Lister
 	ToSet() Seter
 	Serialize() string
-	SerializeAs(itf int) string
+	SerializeJson() string
+	SerializeJavascript() string
 	SortSerialize() string
 	Format(prefix string) string
 	Clone() Itemer
+
+	serializeAs(itf int) string
 }
 
 type DItemBool struct {
@@ -454,6 +457,44 @@ func (it *DItemSet) Clone() Itemer {
 	return it.clone()
 }
 
+func (it *DItemBool) SerializeJson() string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemInt) SerializeJson() string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemFloat) SerializeJson() string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemString) SerializeJson() string {
+	return StrToQuotes(it.Val)
+}
+func (it *DItemList) SerializeJson() string {
+	return it.serialize(ITF_JSON)
+}
+func (it *DItemSet) SerializeJson() string {
+	return it.serialize(ITF_JSON)
+}
+
+func (it *DItemBool) SerializeJavascript() string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemInt) SerializeJavascript() string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemFloat) SerializeJavascript() string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemString) SerializeJavascript() string {
+	return StrToQuotes(it.Val)
+}
+func (it *DItemList) SerializeJavascript() string {
+	return it.serialize(ITF_JAVASCRIPT)
+}
+func (it *DItemSet) SerializeJavascript() string {
+	return it.serialize(ITF_JAVASCRIPT)
+}
+
 func (it *DItemBool) Serialize() string {
 	return fmt.Sprint(it.Val)
 }
@@ -473,22 +514,22 @@ func (it *DItemSet) Serialize() string {
 	return it.serialize(ITF_JSON)
 }
 
-func (it *DItemBool) SerializeAs(itf int) string {
+func (it *DItemBool) serializeAs(itf int) string {
 	return fmt.Sprint(it.Val)
 }
-func (it *DItemInt) SerializeAs(itf int) string {
+func (it *DItemInt) serializeAs(itf int) string {
 	return fmt.Sprint(it.Val)
 }
-func (it *DItemFloat) SerializeAs(itf int) string {
+func (it *DItemFloat) serializeAs(itf int) string {
 	return fmt.Sprint(it.Val)
 }
-func (it *DItemString) SerializeAs(itf int) string {
+func (it *DItemString) serializeAs(itf int) string {
 	return StrToQuotes(it.Val)
 }
-func (it *DItemList) SerializeAs(itf int) string {
+func (it *DItemList) serializeAs(itf int) string {
 	return it.serialize(itf)
 }
-func (it *DItemSet) SerializeAs(itf int) string {
+func (it *DItemSet) serializeAs(itf int) string {
 	return it.serialize(itf)
 }
 
