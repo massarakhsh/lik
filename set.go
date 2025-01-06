@@ -105,7 +105,7 @@ func (it *DItemSet) serialize(itf int) string {
 			} else {
 				text += set.Key + ":"
 			}
-			text += set.Val.Serialize(itf)
+			text += set.Val.SerializeAs(itf)
 		}
 	}
 	text += "}"

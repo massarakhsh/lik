@@ -23,7 +23,8 @@ type Itemer interface {
 	ToString() string
 	ToList() Lister
 	ToSet() Seter
-	Serialize(itf int) string
+	Serialize() string
+	SerializeAs(itf int) string
 	SortSerialize() string
 	Format(prefix string) string
 	Clone() Itemer
@@ -453,36 +454,55 @@ func (it *DItemSet) Clone() Itemer {
 	return it.clone()
 }
 
-func (it *DItemBool) Serialize(itf int) string {
+func (it *DItemBool) Serialize() string {
 	return fmt.Sprint(it.Val)
 }
-func (it *DItemInt) Serialize(itf int) string {
+func (it *DItemInt) Serialize() string {
 	return fmt.Sprint(it.Val)
 }
-func (it *DItemFloat) Serialize(itf int) string {
+func (it *DItemFloat) Serialize() string {
 	return fmt.Sprint(it.Val)
 }
-func (it *DItemString) Serialize(itf int) string {
+func (it *DItemString) Serialize() string {
 	return StrToQuotes(it.Val)
 }
-func (it *DItemList) Serialize(itf int) string {
+func (it *DItemList) Serialize() string {
+	return it.serialize(ITF_JSON)
+}
+func (it *DItemSet) Serialize() string {
+	return it.serialize(ITF_JSON)
+}
+
+func (it *DItemBool) SerializeAs(itf int) string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemInt) SerializeAs(itf int) string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemFloat) SerializeAs(itf int) string {
+	return fmt.Sprint(it.Val)
+}
+func (it *DItemString) SerializeAs(itf int) string {
+	return StrToQuotes(it.Val)
+}
+func (it *DItemList) SerializeAs(itf int) string {
 	return it.serialize(itf)
 }
-func (it *DItemSet) Serialize(itf int) string {
+func (it *DItemSet) SerializeAs(itf int) string {
 	return it.serialize(itf)
 }
 
 func (it *DItemBool) Format(prefix string) string {
-	return it.Serialize(ITF_JSON)
+	return it.Serialize()
 }
 func (it *DItemInt) Format(prefix string) string {
-	return it.Serialize(ITF_JSON)
+	return it.Serialize()
 }
 func (it *DItemFloat) Format(prefix string) string {
-	return it.Serialize(ITF_JSON)
+	return it.Serialize()
 }
 func (it *DItemString) Format(prefix string) string {
-	return it.Serialize(ITF_JSON)
+	return it.Serialize()
 }
 func (it *DItemList) Format(prefix string) string {
 	return it.format(prefix)

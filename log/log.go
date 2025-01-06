@@ -42,7 +42,7 @@ func Say(lev Level, format string, parms ...interface{}) {
 		if LogJson {
 			//fmt.Printf("%s: %s\n", at, text)
 			set := lik.BuildSet("at", at, "text", text)
-			fmt.Printf("%s\n", set.Serialize(lik.ITF_JSON))
+			fmt.Printf("%s\n", set.Serialize())
 		} else {
 			fmt.Printf("%s: %s\n", at, text)
 		}

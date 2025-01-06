@@ -52,7 +52,7 @@ func (elm *ItElm) ToMap() lik.Seter {
 	}
 	elm.ClearInfo()
 	if elm.Info != nil {
-		item.SetValue("info", elm.Info.Serialize(lik.ITF_JSON))
+		item.SetValue("info", elm.Info.Serialize())
 	} else {
 		item.SetValue("info", "{}")
 	}
