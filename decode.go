@@ -30,17 +30,9 @@ func SetFromString(data string) Seter {
 }
 
 func ItemFromString(data string) Itemer {
-	var item Itemer
 	str := strings.Trim(data, " \n\r\t\b")
-	if strings.HasPrefix(str, "{") {
-		pars := buildParse(str)
-		item = pars.scanItMap()
-	} else if strings.HasPrefix(str, "[") {
-		pars := buildParse(str)
-		item = pars.scanItList()
-	} else {
-		item = BuildItem(data)
-	}
+	pars := buildParse(str)
+	item := pars.scanValue()
 	return item
 }
 
