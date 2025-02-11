@@ -13,16 +13,6 @@ type JsonParse struct {
 	Len    int
 }
 
-type JsonParser interface {
-	scanItValue() Itemer
-	scanItMap() Seter
-	scanItList() Lister
-	scanItString() string
-	scanItImmediate() string
-	getNextRune() rune
-	stepNextRule()
-}
-
 func buildParse(data string) *JsonParse {
 	parse := JsonParse{}
 	parse.Source = []rune(data)
