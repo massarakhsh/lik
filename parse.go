@@ -61,7 +61,7 @@ func (pars *JsonParse) scanMap() Seter {
 		if ch == ZERO || ch == '}' {
 			break
 		}
-		if ch != '"' || ch != '\'' {
+		if ch != '"' && ch != '\'' {
 			pars.printError("need key")
 			return nil
 		}
@@ -71,17 +71,22 @@ func (pars *JsonParse) scanMap() Seter {
 			return nil
 		}
 		ch = pars.getNextRune()
-		if ch != '=' && ch != ':' {
+		if ch != ':' {
+			pars.printError("need `:`")
 			break
 		}
 		pars.stepNextRune()
-		item := pars.scanItValue()
-		if item != nil {
-			info.SetValue(key, item)
+		item := pars.scanValue()
+		if item == nil {
+			pars.printError("need value")
+			break
 		}
+		info.SetValue(key, item)
 		ch = pars.getNextRune()
 		if ch == ',' {
 			pars.stepNextRune()
+		} else {
+			break
 		}
 	}
 	if pars.getNextRune() != '}' {
@@ -104,8 +109,9 @@ func (pars *JsonParse) scanList() Lister {
 		if ch == ZERO || ch == ']' {
 			break
 		}
-		item := pars.scanItValue()
+		item := pars.scanValue()
 		if item == nil {
+			pars.printError("need value")
 			break
 		}
 		info.AddItems(item)
@@ -133,9 +139,11 @@ func (pars *JsonParse) scanString() string {
 		if ch == chg {
 			pars.Pos++
 			break
-		} else if ch == '\\' {
+		}
+		if ch == '\\' {
 			pars.Pos++
 			if pars.Pos >= pars.Len {
+				pars.printError("need symbol")
 				break
 			}
 			chn := pars.Source[pars.Pos]

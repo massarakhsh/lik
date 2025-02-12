@@ -56,7 +56,7 @@ func SetFromQuery(data string) Seter {
 			key := word[0:peq]
 			val := word[peq+1:]
 			pars := buildParse(val)
-			item := pars.scanItValue()
+			item := pars.scanValue()
 			if key != "" {
 				set.SetValue(key, item)
 			}
@@ -77,13 +77,13 @@ func SetFromStruct(data interface{}) Seter {
 	return BuildItem(data).ToSet()
 }
 
-func ListFromRequest(data string) Lister {
-	result := BuildList()
-	data = strings.Trim(data, " \n\r\t")
-	if data == "" {
-	} else if strings.HasPrefix(data, "[") {
-		pars := buildParse(data)
-		result = pars.scanItList()
-	}
-	return result
-}
+// func ListFromRequest(data string) Lister {
+// 	result := BuildList()
+// 	data = strings.Trim(data, " \n\r\t")
+// 	if data == "" {
+// 	} else if strings.HasPrefix(data, "[") {
+// 		pars := buildParse(data)
+// 		result = pars.scanItList()
+// 	}
+// 	return result
+// }
