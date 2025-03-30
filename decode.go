@@ -37,7 +37,7 @@ func ItemFromString(data string) Itemer {
 }
 
 func SetFromRequest(data string) Seter {
-	set := BuildSet()
+	var set Seter
 	data = strings.Trim(data, " \n\r\t\b")
 	if strings.HasPrefix(data, "{") {
 		set = SetFromString(data)
@@ -54,11 +54,15 @@ func SetFromQuery(data string) Seter {
 	for _, word := range words {
 		if peq := strings.Index(word, "="); peq > 0 {
 			key := word[0:peq]
-			val := word[peq+1:]
-			pars := buildParse(val)
-			item := pars.scanValue()
 			if key != "" {
-				set.SetValue(key, item)
+				val := word[peq+1:]
+				if val != "" && (val[0] == '{' || val[0] == '[') {
+					pars := buildParse(val)
+					item := pars.scanValue()
+					set.SetValue(key, item)
+				} else {
+					set.SetString(key, val)
+				}
 			}
 		}
 	}
