@@ -262,23 +262,34 @@ func RegExReplace(text string, reg string, repl string) string {
 }
 
 func GetFirstExt(path string) (string, string) {
-	if match := RegExParse(path, "^/(.*)"); match != nil {
-		path = match[1]
-	}
 	name, ext := path, ""
-	if match := RegExParse(path, "^([^/]*)/(.*)"); match != nil {
-		name = match[1]
-		ext = match[2]
+	if len(name) > 0 {
+		ch := name[0]
+		if ch == '=' {
+			name = name[1:]
+		} else {
+			if ch == '/' {
+				name = name[1:]
+			}
+			if pos := strings.IndexByte(name, '/'); pos >= 0 {
+				ext = name[pos+1:]
+				name = name[:pos]
+			}
+		}
 	}
 	return name, ext
 }
 
 func PathToNames(path string) []string {
-	names := strings.Split(path, "/")
-	for len(names) > 0 && names[0] == "" {
-		names = names[1:]
+	if strings.IndexByte(path, '=') == 0 {
+		return []string{path[1:]}
+	} else {
+		names := strings.Split(path, "/")
+		for len(names) > 0 && names[0] == "" {
+			names = names[1:]
+		}
+		return names
 	}
-	return names
 }
 
 func CompareVersion(ver1 string, ver2 string) int {

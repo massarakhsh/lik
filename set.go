@@ -186,10 +186,10 @@ func (it *DItemSet) IsItem(path string) bool {
 func (it *DItemSet) GetItem(path string) Itemer {
 	var val Itemer
 	name, ext := GetFirstExt(path)
-	if name == "" && ext == "" {
+	if path == "" || path == "/" {
 		val = it
-	} else if name == "" {
-		val = it.GetItem(ext)
+		// } else if name == "" {
+		// 	val = it.GetItem(ext)
 	} else if ns := it.Seek(name); ns >= 0 {
 		val = getInfoItem(it.Val[ns].Val, ext)
 	}
