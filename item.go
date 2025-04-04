@@ -642,11 +642,11 @@ func setInfoItem(val interface{}, info Itemer, path string) bool {
 			if setInfoItem(val, item, ext) {
 				modify = true
 			}
-		} else if RegExCompare(ext, "^(\\d+)") {
-			modify = true
-			item := BuildList()
-			imap.SetValue(name, item)
-			setInfoItem(val, item, ext)
+			// } else if RegExCompare(ext, "^(\\d+)") {
+			// 	modify = true
+			// 	item := BuildList()
+			// 	imap.SetValue(name, item)
+			// 	setInfoItem(val, item, ext)
 		} else {
 			modify = true
 			item := BuildSet()
@@ -663,11 +663,11 @@ func setInfoItem(val interface{}, info Itemer, path string) bool {
 				if setInfoItem(val, item, ext) {
 					modify = true
 				}
-			} else if RegExCompare(ext, "^(\\d+)") {
-				modify = true
-				item := BuildList()
-				ilist.SetValue(idx, item)
-				setInfoItem(val, item, ext)
+				// } else if RegExCompare(ext, "^(\\d+)") {
+				// 	modify = true
+				// 	item := BuildList()
+				// 	ilist.SetValue(idx, item)
+				// 	setInfoItem(val, item, ext)
 			} else {
 				modify = true
 				item := BuildSet()

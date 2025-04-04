@@ -299,10 +299,10 @@ func (it *DItemSet) SetValue(path string, val interface{}) bool {
 			if setInfoItem(val, set.Val, ext) {
 				modify = true
 			}
-		} else if RegExCompare(ext, "^(\\d+)") {
-			modify = true
-			set.Val = BuildList()
-			setInfoItem(val, set.Val, ext)
+			// } else if RegExCompare(ext, "^(\\d+)") {
+			// 	modify = true
+			// 	set.Val = BuildList()
+			// 	setInfoItem(val, set.Val, ext)
 		} else {
 			modify = true
 			set.Val = BuildSet()

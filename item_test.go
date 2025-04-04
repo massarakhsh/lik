@@ -1,7 +1,6 @@
 package lik
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,7 +17,7 @@ func TestItem(t *testing.T) {
 		set.SetValue("append/one", "one")
 		set.SetValue("append/two", "two")
 		set.SetValue("=/long/long", "longlong")
-		fmt.Println(set.Format(""))
+		//fmt.Println(set.Format(""))
 		assert.Equal(t, "str", set.GetString("str"))
 		assert.Equal(t, false, set.GetBool("no"))
 		assert.Equal(t, true, set.GetBool("yes"))
