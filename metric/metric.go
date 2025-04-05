@@ -1,11 +1,8 @@
 package metric
 
 import (
-	"strings"
 	"sync"
 	"time"
-
-	"github.com/massarakhsh/lik"
 )
 
 const protoNo = 0
@@ -42,128 +39,117 @@ type calcLine struct {
 	weight   float64
 }
 
-func (it *MetricValue) GetLast(name string) float64 {
+func (it *MetricValue) GetLast(path ...string) float64 {
 	it.gate.RLock()
 	defer it.gate.RUnlock()
 
-	if it.isIt(name) {
+	if len(path) == 0 {
 		return it.lastValue
-	} else if elm, next := it.seekMetric(name, false); elm != nil {
-		return elm.GetLast(next)
+	} else if elm := it.seekMetric(false, path); elm != nil {
+		return elm.GetLast(path[1:]...)
 	} else {
 		return 0
 	}
 }
 
-func (it *MetricValue) SetLast(name string, value float64) {
+func (it *MetricValue) SetLast(value float64, path ...string) {
 	it.gate.Lock()
 	defer it.gate.Unlock()
 
 	it.lastValue = value
-	if elm, next := it.seekMetric(name, true); elm != nil {
-		elm.SetLast(next, value)
+	if elm := it.seekMetric(true, path); elm != nil {
+		elm.SetLast(value, path[1:]...)
 	}
 }
 
-func (it *MetricValue) SetValueInt(name string, value int64) {
+func (it *MetricValue) SetValueInt(value int64, path ...string) {
 	it.gate.Lock()
 	defer it.gate.Unlock()
 
 	it.set(float64(value), protoValue)
-	if elm, next := it.seekMetric(name, true); elm != nil {
-		elm.SetValueInt(next, value)
+	if elm := it.seekMetric(true, path); elm != nil {
+		elm.SetValueInt(value, path[1:]...)
 	}
 }
 
-func (it *MetricValue) SetValueFloat(name string, value float64) {
+func (it *MetricValue) SetValueFloat(value float64, path ...string) {
 	it.gate.Lock()
 	defer it.gate.Unlock()
 
 	it.set(value, protoValue)
-	if elm, next := it.seekMetric(name, true); elm != nil {
-		elm.SetValueFloat(next, value)
+	if elm := it.seekMetric(true, path); elm != nil {
+		elm.SetValueFloat(value, path[1:]...)
 	}
 }
 
-func (it *MetricValue) Inc(name string) {
+func (it *MetricValue) Inc(path ...string) {
 	it.gate.Lock()
 	defer it.gate.Unlock()
 
 	it.set(1, protoFreq)
-	if elm, next := it.seekMetric(name, true); elm != nil {
-		elm.Inc(next)
+	if elm := it.seekMetric(true, path); elm != nil {
+		elm.Inc(path[1:]...)
 	}
 }
 
-func (it *MetricValue) Add(name string, value int64) {
+func (it *MetricValue) Add(value float64, path ...string) {
 	it.gate.Lock()
 	defer it.gate.Unlock()
 
-	it.set(float64(value), protoFreq)
-	if elm, next := it.seekMetric(name, true); elm != nil {
-		elm.Add(next, value)
+	it.set(value, protoFreq)
+	if elm := it.seekMetric(true, path); elm != nil {
+		elm.Add(value, path[1:]...)
 	}
 }
 
-func (it *MetricValue) GetValue(name string) float64 {
+func (it *MetricValue) GetValue(path ...string) float64 {
 	it.gate.RLock()
 	defer it.gate.RUnlock()
 
-	if it.isIt(name) {
+	if len(path) == 0 {
 		return it.get()
-	} else if elm, next := it.seekMetric(name, false); elm != nil {
-		return elm.GetValue(next)
+	} else if elm := it.seekMetric(false, path); elm != nil {
+		return elm.GetValue(path[1:]...)
 	} else {
 		return 0
 	}
 }
 
-func (it *MetricValue) GetListValues(name string, at time.Time, step time.Duration, need int) []float64 {
+func (it *MetricValue) GetListValues(at time.Time, step time.Duration, need int, path ...string) []float64 {
 	it.gate.RLock()
 	defer it.gate.RUnlock()
 
-	if it.isIt(name) {
+	if len(path) == 0 {
 		return it.getList(at, step, need)
-	} else if elm, next := it.seekMetric(name, false); elm != nil {
-		return elm.GetListValues(next, at, step, need)
+	} else if elm := it.seekMetric(false, path); elm != nil {
+		return elm.GetListValues(at, step, need, path[1:]...)
 	} else {
 		return nil
 	}
 }
 
-func (it *MetricValue) GetCollect(name string) []string {
+func (it *MetricValue) GetCollect(path ...string) []string {
 	it.gate.RLock()
 	defer it.gate.RUnlock()
 
-	if it.isIt(name) {
+	if len(path) == 0 {
 		var collect []string
 		for _, elm := range it.elms {
 			collect = append(collect, elm.name)
 		}
 		return collect
-	} else if elm, next := it.seekMetric(name, false); elm != nil {
-		return elm.GetCollect(next)
+	} else if elm := it.seekMetric(false, path); elm != nil {
+		return elm.GetCollect(path[1:]...)
 	} else {
 		return nil
 	}
 }
 
-func (it *MetricValue) isIt(path string) bool {
-	return lik.RegExCompare(path, "^/*$")
-}
-
-func (it *MetricValue) seekMetric(path string, create bool) (*MetricValue, string) {
-	name, next := strings.TrimPrefix(path, "/"), ""
-	if name == "" {
-		return nil, ""
+func (it *MetricValue) seekMetric(create bool, path []string) *MetricValue {
+	if len(path) == 0 {
+		return nil
 	}
-	if match := lik.RegExParse(name, "([^/]*)/(.*)"); match != nil {
-		name = match[1]
-		next = match[2]
-	}
-	if name == "" {
-		return it.seekMetric(next, create)
-	}
+	name := path[0]
 
 	var elm *MetricValue
 	max := len(it.elms)
@@ -189,5 +175,5 @@ func (it *MetricValue) seekMetric(path string, create bool) (*MetricValue, strin
 		it.elms = elms
 	}
 
-	return elm, next
+	return elm
 }
