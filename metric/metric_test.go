@@ -10,9 +10,9 @@ import (
 func TestMetrics(t *testing.T) {
 	met := MetricValue{}
 	for n := 0; n < 1000; n++ {
-		met.SetValueFloat(rand.Float64())
+		met.SetPathFloat(rand.Float64())
 	}
-	avg := met.GetValue()
+	avg := met.GetPath()
 	ok := avg > 0.4 && avg < 0.6
 	if !ok {
 		t.Errorf("ERROR of metric.Get/SetValue")
