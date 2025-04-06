@@ -190,6 +190,19 @@ func (it *MetricValue) nameToPath(name string) []string {
 	}
 }
 
+func (it *MetricValue) SeekMetric(path ...string) *MetricValue {
+	it.gate.RLock()
+	defer it.gate.RUnlock()
+
+	if len(path) == 0 {
+		return it
+	} else if elm := it.seekMetric(false, path); elm != nil {
+		return elm.SeekMetric(path[1:]...)
+	} else {
+		return nil
+	}
+}
+
 func (it *MetricValue) seekMetric(create bool, path []string) *MetricValue {
 	if len(path) == 0 {
 		return nil
