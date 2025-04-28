@@ -9,12 +9,13 @@ import (
 const SessionDuration = time.Minute * 30
 
 type itSession struct {
-	id      int
-	lastIn  time.Time
-	session ItSession
+	id     int
+	lastIn time.Time
+	self   ItSession
 }
 
 type ItSession interface {
+	Close()
 }
 
 var sessionGate sync.Mutex
@@ -25,7 +26,7 @@ func GetSession(id int) ItSession {
 	sessionGate.Lock()
 	var session ItSession
 	if isess, ok := sessionMap[id]; ok {
-		session = isess.session
+		session = isess.self
 		isess.lastIn = time.Now()
 	}
 	sessionGate.Unlock()
@@ -37,7 +38,7 @@ func GetAllSessions() []ItSession {
 	var list []ItSession
 	sessionGate.Lock()
 	for _, sess := range sessionMap {
-		list = append(list, sess.session)
+		list = append(list, sess.self)
 	}
 	sessionGate.Unlock()
 	return list
@@ -47,7 +48,7 @@ func CreateSession(session ItSession) int {
 	purgeSessions()
 	sessionGate.Lock()
 	id := 100000000 + rand.Intn(900000000)
-	isess := &itSession{id: id, session: session}
+	isess := &itSession{id: id, self: session}
 	isess.lastIn = time.Now()
 	sessionMap[id] = isess
 	sessionGate.Unlock()
@@ -61,6 +62,7 @@ func purgeSessions() {
 	}
 	for id, session := range sessionMap {
 		if time.Since(session.lastIn) > SessionDuration {
+			session.self.Close()
 			delete(sessionMap, id)
 		}
 	}
