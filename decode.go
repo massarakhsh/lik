@@ -59,7 +59,9 @@ func SetFromQuery(data string) Seter {
 				if val != "" && (val[0] == '{' || val[0] == '[') {
 					pars := buildParse(val)
 					item := pars.scanValue()
-					set.SetValue(key, item)
+					if item != nil {
+						set.SetValue(key, item)
+					}
 				} else {
 					set.SetString(key, val)
 				}
@@ -80,14 +82,3 @@ func SetFromMap(data map[string]interface{}) Seter {
 func SetFromStruct(data interface{}) Seter {
 	return BuildItem(data).ToSet()
 }
-
-// func ListFromRequest(data string) Lister {
-// 	result := BuildList()
-// 	data = strings.Trim(data, " \n\r\t")
-// 	if data == "" {
-// 	} else if strings.HasPrefix(data, "[") {
-// 		pars := buildParse(data)
-// 		result = pars.scanItList()
-// 	}
-// 	return result
-// }

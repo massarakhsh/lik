@@ -1,6 +1,9 @@
 package lik
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 const (
 	Dbg  = false
@@ -31,10 +34,12 @@ func (pars *JsonParse) scanValue() Itemer {
 		return &DItemString{str}
 	} else {
 		str := pars.scanImmediate()
-		if str == "true" || str == "True" || str == "TRUE" {
+		if lstr := strings.ToLower(str); lstr == "true" {
 			return &DItemBool{true}
-		} else if str == "false" || str == "False" || str == "FALSE" {
+		} else if lstr == "false" {
 			return &DItemBool{false}
+		} else if lstr == "null" || lstr == "nil" {
+			return nil
 		} else if ival, ok := StrToInt64If(str); ok {
 			return &DItemInt{ival}
 		} else if fval, ok := StrToFloatIf(str); ok {
@@ -77,11 +82,9 @@ func (pars *JsonParse) scanMap() Seter {
 		}
 		pars.stepNextRune()
 		item := pars.scanValue()
-		if item == nil {
-			pars.printError("need value")
-			break
+		if item != nil {
+			info.SetValue(key, item)
 		}
-		info.SetValue(key, item)
 		ch = pars.getNextRune()
 		if ch == ',' {
 			pars.stepNextRune()
@@ -110,11 +113,9 @@ func (pars *JsonParse) scanList() Lister {
 			break
 		}
 		item := pars.scanValue()
-		if item == nil {
-			pars.printError("need value")
-			break
+		if item != nil {
+			info.AddItems(item)
 		}
-		info.AddItems(item)
 		ch = pars.getNextRune()
 		if ch == ',' {
 			pars.stepNextRune()
