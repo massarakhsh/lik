@@ -7,7 +7,8 @@ func (it *MetricValue) set(value float64, proto int) {
 	it.proto = proto
 
 	duraMax := duraElm
-	addElm := calcLine{at: time.Now().UnixMilli(), count: 1, weight: value}
+	now := time.Now()
+	addElm := lineValue{at: now.UnixMilli(), count: 1, weight: value}
 	seria := 0
 	for {
 		if seria >= it.countSeries {
@@ -18,6 +19,10 @@ func (it *MetricValue) set(value float64, proto int) {
 		pos := it.posSeries[seria]
 		if pos >= it.lenSeries[seria] {
 			it.lenSeries[seria]++
+			if seria == 0 && pos == 0 {
+				addElm.at = addElm.at / 1000 * 1000
+			}
+			addElm.duration = now.UnixMilli() - addElm.at
 			it.listValues = append(it.listValues, addElm)
 			break
 		}

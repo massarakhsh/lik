@@ -18,7 +18,7 @@ type MetricValue struct {
 	countSeries int
 	posSeries   []int
 	lenSeries   []int
-	listValues  []calcLine
+	listValues  []lineValue
 
 	elms []MetricElm
 }
@@ -33,7 +33,7 @@ const duraElm int64 = 1000
 const duraFactor = 5
 const maxCalcule int64 = 1000 * 10
 
-type calcLine struct {
+type lineValue struct {
 	at       int64
 	duration int64
 	count    int64
