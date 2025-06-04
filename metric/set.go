@@ -2,53 +2,45 @@ package metric
 
 import "time"
 
-func (it *MetricValue) set(value float64, proto int) {
+func (it *MetricValue) set(value float64, proto ProtoMetric) {
 	it.lastValue = value
 	it.proto = proto
 
-	duraMax := duraElm
-	now := time.Now()
-	addElm := lineValue{at: now.UnixMilli(), count: 1, weight: value}
-	seria := 0
+	level := 0
+	duraLev := duraStart
+	now := time.Now().UnixMilli() /*/ duraStart * duraStart*/
+	addElm := lineValue{at: now, count: 1, weight: value}
 	for {
-		if seria >= it.countSeries {
-			it.countSeries = seria + 1
-			it.posSeries = append(it.posSeries, 0)
-			it.lenSeries = append(it.lenSeries, 0)
+		if level >= len(it.lineLevels) {
+			it.lineLevels = append(it.lineLevels, lineLevel{})
 		}
-		pos := it.posSeries[seria]
-		if pos >= it.lenSeries[seria] {
-			it.lenSeries[seria]++
-			if seria == 0 && pos == 0 {
-				addElm.at = addElm.at / 1000 * 1000
-			}
-			addElm.duration = now.UnixMilli() - addElm.at
+		toLevel := &it.lineLevels[level]
+		pos := toLevel.pos
+		loc := level*duraSize + pos
+		if loc >= len(it.listValues) {
+			toLevel.size++
 			it.listValues = append(it.listValues, addElm)
 			break
 		}
-		elm := &it.listValues[seria*maxElms+pos]
-		if addElm.at/duraMax == elm.at/duraMax {
+		elm := &it.listValues[loc]
+		if addElm.at/duraLev == elm.at/duraLev {
 			elm.count += addElm.count
 			elm.weight += addElm.weight
-			elm.duration = addElm.at - elm.at + addElm.duration
 			break
 		}
-		end := addElm.at + addElm.duration
-		addElm.at = addElm.at / duraMax * duraMax
-		elm.duration = addElm.at - elm.at
-		addElm.duration = end - addElm.at
 		pos++
-		if pos >= maxElms {
+		if pos >= duraSize {
 			pos = 0
 		}
-		it.posSeries[seria] = pos
-		if it.lenSeries[seria] >= maxElms {
-			elm = &it.listValues[seria*maxElms+pos]
+		toLevel.pos = pos
+		loc = level*duraSize + pos
+		if toLevel.size >= duraSize {
+			elm = &it.listValues[loc]
 			pushElm := *elm
 			*elm = addElm
 			addElm = pushElm
-			duraMax *= duraFactor
-			seria++
+			level++
+			duraLev *= duraFactor
 		}
 	}
 }

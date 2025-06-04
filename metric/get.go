@@ -8,10 +8,11 @@ func (it *MetricValue) get() float64 {
 	var dura int64
 	count := int64(0)
 	weight := 0.0
-	if it.countSeries > 0 {
+	if len(it.lineLevels) > 0 {
 		now := time.Now().UnixMilli()
-		for n := 0; n < it.lenSeries[0]; n++ {
-			pos := (it.posSeries[0] - n + maxElms) % maxElms
+		toLevel := &it.lineLevels[0]
+		for n := 0; n < toLevel.size; n++ {
+			pos := (toLevel.pos - n + duraSize) % duraSize
 			elm := &it.listValues[pos]
 			if now-elm.at >= maxCalcule {
 				break

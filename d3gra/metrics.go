@@ -9,18 +9,24 @@ import (
 	"github.com/massarakhsh/lik/metric"
 )
 
-func BuildPanel(id string, sx, sy int, distance time.Duration, series lik.Lister) likdom.Domer {
-	options := lik.BuildSet("width", sx, "height", sy)
-	to := time.Now()
-	from := to.Add(-distance)
-	options.SetValues("to", to.UnixMilli(), "from", from.UnixMilli())
-	options.SetValues("series", series)
+func BuildDiv(id string, sx, sy int, panel lik.Seter, series lik.Lister) likdom.Domer {
+	panel.SetValue("sx", sx)
+	panel.SetValue("sy", sy)
+	panel.SetValue("series", series)
 
 	div := likdom.BuildDiv("id", id, "width", sx, "hight", sy)
 	script := div.BuildItem("script")
-	script.BuildString(fmt.Sprintf("let options = %s;\n", options.SerializeJavascript()))
+	script.BuildString(fmt.Sprintf("let options = %s;\n", panel.SerializeJavascript()))
 	script.BuildString(fmt.Sprintf("draw_charts('%s', options);\n", id))
 	return div
+}
+
+func BuildPanel(distance time.Duration) lik.Seter {
+	panel := lik.BuildSet()
+	to := time.Now()
+	from := to.Add(-distance)
+	panel.SetValues("to", to.UnixMilli(), "from", from.UnixMilli())
+	return panel
 }
 
 func BuildSeria(metro *metric.MetricValue, to time.Time, step time.Duration, count int) lik.Seter {

@@ -6,38 +6,42 @@ import (
 	"time"
 )
 
-const protoNo = 0
-const protoValue = 1
-const protoFreq = 2
+type ProtoMetric int
+
+const protoNo ProtoMetric = 0
+const protoValue ProtoMetric = 1
+const protoFreq ProtoMetric = 2
 
 type MetricValue struct {
 	gate      sync.RWMutex
-	proto     int
+	proto     ProtoMetric
 	lastValue float64
 
-	countSeries int
-	posSeries   []int
-	lenSeries   []int
-	listValues  []lineValue
+	lineLevels []lineLevel
+	listValues []lineValue
 
-	elms []MetricElm
+	elms []metricElm
 }
 
-type MetricElm struct {
+type metricElm struct {
 	name string
 	elm  *MetricValue
 }
 
-const maxElms int = 100
-const duraElm int64 = 1000
-const duraFactor = 5
+const duraStart int64 = 1024
+const duraSize int = 64
+const duraFactor = 2
 const maxCalcule int64 = 1000 * 10
 
+type lineLevel struct {
+	size int
+	pos  int
+}
+
 type lineValue struct {
-	at       int64
-	duration int64
-	count    int64
-	weight   float64
+	at     int64
+	count  int64
+	weight float64
 }
 
 func (it *MetricValue) GetLast(name string) float64 {
@@ -221,12 +225,12 @@ func (it *MetricValue) seekMetric(create bool, path []string) *MetricValue {
 		}
 	}
 	if elm == nil && create {
-		elms := make([]MetricElm, max+1)
+		elms := make([]metricElm, max+1)
 		for n := 0; n < pos; n++ {
 			elms[n] = it.elms[n]
 		}
 		elm = &MetricValue{}
-		elms[pos] = MetricElm{name: name, elm: elm}
+		elms[pos] = metricElm{name: name, elm: elm}
 		for n := pos; n < max; n++ {
 			elms[n+1] = it.elms[n]
 		}
