@@ -12,7 +12,6 @@ func (it *MetricValue) getList(atTime time.Time, stepTime time.Duration, need in
 	sumCount := int64(0)
 	sumWeight := 0.0
 	sumValue := 0.0
-	sumMultiply := 0
 	nextAt := at
 	nextValue := 0.0
 	level := 0
@@ -33,15 +32,7 @@ func (it *MetricValue) getList(atTime time.Time, stepTime time.Duration, need in
 			sumCount = toElm.count
 			sumWeight = toElm.weight
 			sumAt = toElm.at
-			value := it.calculeValue(sumCount, sumWeight, nextAt-sumAt)
-			if sumMultiply <= 0 {
-				sumValue = value
-				sumMultiply = 1
-			} else {
-				summa := sumValue*float64(sumMultiply) + value
-				sumMultiply++
-				sumValue = summa / float64(sumMultiply)
-			}
+			sumValue = it.calculeValue(sumCount, sumWeight, nextAt-sumAt)
 			if oldAt > 0 {
 				nextAt = oldAt
 				nextValue = oldValue
@@ -60,7 +51,6 @@ func (it *MetricValue) getList(atTime time.Time, stepTime time.Duration, need in
 			} else {
 				good++
 			}
-			sumMultiply = 0
 			at -= step
 		}
 		if at < sumAt {
