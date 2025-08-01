@@ -16,7 +16,7 @@ func BuildDiv(id string, sx, sy int, panel lik.Seter, series lik.Lister) likdom.
 
 	div := likdom.BuildDiv("id", id, "width", sx, "hight", sy)
 	script := div.BuildItem("script")
-	script.BuildString(fmt.Sprintf("let options = %s;\n", panel.SerializeJavascript()))
+	script.BuildString(fmt.Sprintf("var options = %s;\n", panel.SerializeJavascript()))
 	script.BuildString(fmt.Sprintf("draw_charts('%s', options);\n", id))
 	return div
 }
