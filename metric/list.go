@@ -53,8 +53,9 @@ func (value *MetricValue) getList(atTime time.Time, stepTime time.Duration, need
 			fVal := 0.0
 			if atTime.Before(right.at) {
 				fVal = (left.value*right.at.Sub(atTime).Seconds() + right.value*atTime.Sub(left.at).Seconds()) / right.at.Sub(left.at).Seconds()
+				values = append(values, fVal)
+				used = true
 			}
-			values = append(values, fVal)
 			atTime = atTime.Add(-stepTime)
 			need--
 		}
