@@ -4,79 +4,69 @@ import (
 	"time"
 )
 
-func (it *MetricValue) getList(atTime time.Time, stepTime time.Duration, need int) []float64 {
-	at := atTime.UnixMilli()
-	step := stepTime.Milliseconds()
+type tv struct {
+	at     time.Time
+	to     time.Time
+	value  float64
+	factor int
+}
+
+func (value *MetricValue) getList(atTime time.Time, stepTime time.Duration, need int) []float64 {
 	var values []float64
-	sumAt := int64(0)
-	sumCount := int64(0)
-	sumWeight := 0.0
-	sumValue := 0.0
-	sumMultiply := 0
-	nextAt := at
-	nextValue := 0.0
 	level := 0
 	index := 0
-	good := 0
-	for need > 0 && level < len(it.lineLevels) {
-		toLevel := &it.lineLevels[level]
-		if index >= toLevel.size {
-			level++
-			index = 0
-			continue
-		}
-		pos := (toLevel.pos - index + duraSize) % duraSize
-		toElm := &it.listValues[level*duraSize+pos]
-		if sumAt == 0 || toElm.at < sumAt {
-			oldValue := sumValue
-			oldAt := sumAt
-			sumCount = toElm.count
-			sumWeight = toElm.weight
-			sumAt = toElm.at
-			if oldAt > 0 {
-				nextAt = oldAt
+
+	var left tv
+	var right tv
+	used := false
+
+	for need > 0 && level < len(value.lineLevels) {
+		if right.factor == 0 || atTime.Before(left.at) {
+			toLevel := &value.lineLevels[level]
+			if index >= toLevel.size {
+				level++
+				index = 0
+				continue
 			}
-			value := it.calculeValue(sumCount, sumWeight, nextAt-sumAt)
-			if sumMultiply <= 0 {
-				sumValue = value
-				sumMultiply = 1
-			} else {
-				summa := sumValue*float64(sumMultiply) + value
-				sumMultiply++
-				sumValue = summa / float64(sumMultiply)
-			}
-			if oldAt > 0 {
-				nextValue = oldValue
-			} else {
-				nextValue = sumValue
-			}
-		}
-		if over := at - sumAt; over >= 0 {
-			if good > 2 {
-				value := sumValue
-				if dura := nextAt - sumAt; dura > 0 {
-					value = (sumValue*float64(dura-over) + nextValue*float64(over)) / float64(dura)
-				}
-				values = append(values, value)
-				need--
-			} else {
-				good++
-			}
-			sumMultiply = 0
-			at -= step
-		}
-		if at < sumAt {
+			pos := (toLevel.pos - index + duraSize) % duraSize
+			toElm := &value.listValues[level*duraSize+pos]
 			index++
+			var leftTo time.Time
+			if left.factor == 0 {
+				leftTo = atTime
+			} else if right.factor == 0 {
+				right = left
+				leftTo = right.at
+			} else if used {
+				right = left
+				leftTo = right.at
+				used = false
+			} else {
+				summ := right.value*float64(right.factor) + left.value
+				right.factor++
+				right.value = summ / float64(right.factor)
+				leftTo = right.at
+			}
+			left = tv{at: toElm.at, to: leftTo, factor: 1}
+			left.value = value.calculeValue(toElm, leftTo)
+		} else {
+			fVal := 0.0
+			if atTime.Before(right.at) {
+				fVal = (left.value*right.at.Sub(atTime).Seconds() + right.value*atTime.Sub(left.at).Seconds()) / right.at.Sub(left.at).Seconds()
+			}
+			values = append(values, fVal)
+			atTime = atTime.Add(-stepTime)
+			need--
 		}
 	}
 	return values
 }
 
-func (it *MetricValue) calculeValue(count int64, weight float64, duration int64) float64 {
-	if it.proto == protoValue && count > 0 {
-		return weight / float64(count)
-	} else if it.proto == protoFreq && duration > 0 {
-		return weight / (float64(duration) / 1000)
+func (value *MetricValue) calculeValue(elm *lineValue, to time.Time) float64 {
+	if value.proto == protoValue && elm.count > 0 {
+		return elm.weight / float64(elm.count)
+	} else if value.proto == protoFreq && to.After(elm.at) {
+		return elm.weight / to.Sub(elm.at).Seconds()
 	} else {
 		return 0
 	}

@@ -2,28 +2,28 @@ package metric
 
 import "time"
 
-func (it *MetricValue) set(value float64, proto ProtoMetric) {
-	it.lastValue = value
-	it.proto = proto
+func (value *MetricValue) set(fval float64, proto ProtoMetric) {
+	value.lastValue = fval
+	value.proto = proto
 
 	level := 0
 	duraLev := duraStart
-	now := time.Now().UnixMilli() /*/ duraStart * duraStart*/
-	addElm := lineValue{at: now, count: 1, weight: value}
+	now := time.Now()
+	addElm := lineValue{at: now, count: 1, weight: fval}
 	for {
-		if level >= len(it.lineLevels) {
-			it.lineLevels = append(it.lineLevels, lineLevel{})
+		if level >= len(value.lineLevels) {
+			value.lineLevels = append(value.lineLevels, lineLevel{})
 		}
-		toLevel := &it.lineLevels[level]
+		toLevel := &value.lineLevels[level]
 		pos := toLevel.pos
 		loc := level*duraSize + pos
-		if loc >= len(it.listValues) {
+		if loc >= len(value.listValues) {
 			toLevel.size++
-			it.listValues = append(it.listValues, addElm)
+			value.listValues = append(value.listValues, addElm)
 			break
 		}
-		elm := &it.listValues[loc]
-		if addElm.at/duraLev == elm.at/duraLev {
+		elm := &value.listValues[loc]
+		if addElm.at.Sub(elm.at) <= duraLev {
 			elm.count += addElm.count
 			elm.weight += addElm.weight
 			break
@@ -35,7 +35,7 @@ func (it *MetricValue) set(value float64, proto ProtoMetric) {
 		toLevel.pos = pos
 		loc = level*duraSize + pos
 		if toLevel.size >= duraSize {
-			elm = &it.listValues[loc]
+			elm = &value.listValues[loc]
 			pushElm := *elm
 			*elm = addElm
 			addElm = pushElm

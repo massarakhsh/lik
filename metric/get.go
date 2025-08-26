@@ -4,28 +4,25 @@ import (
 	"time"
 )
 
-func (it *MetricValue) get() float64 {
-	var dura int64
+func (value *MetricValue) get() float64 {
+	var duration time.Duration = 0
 	count := int64(0)
 	weight := 0.0
-	if len(it.lineLevels) > 0 {
-		now := time.Now().UnixMilli()
-		toLevel := &it.lineLevels[0]
-		for n := 0; n < toLevel.size; n++ {
+	if len(value.lineLevels) > 0 {
+		now := time.Now()
+		toLevel := &value.lineLevels[0]
+		for n := 0; n < toLevel.size && duration < maxCalcule; n++ {
 			pos := (toLevel.pos - n + duraSize) % duraSize
-			elm := &it.listValues[pos]
-			if now-elm.at >= maxCalcule {
-				break
-			}
+			elm := &value.listValues[pos]
 			count += elm.count
 			weight += elm.weight
-			dura = now - elm.at
+			duration = now.Sub(elm.at)
 		}
 	}
-	if it.proto == protoValue && count > 0 {
+	if value.proto == protoValue && count > 0 {
 		return weight / float64(count)
-	} else if it.proto == protoFreq && dura > 0 {
-		return weight / (float64(dura) / 1000)
+	} else if value.proto == protoFreq && duration > 0 {
+		return weight / duration.Seconds()
 	}
 	return 0
 }
