@@ -4,20 +4,26 @@ import (
 	"time"
 )
 
-type tv struct {
+type aTV struct {
 	at     time.Time
 	to     time.Time
 	value  float64
 	factor int
 }
 
-func (value *MetricValue) getList(atTime time.Time, stepTime time.Duration, need int) []float64 {
+func (value *MetricValue) listGet(atTime time.Time, stepTime time.Duration, need int) []float64 {
+	list := value.listCollect(atTime, stepTime, need)
+	smooth := value.listSmooth(list)
+	return smooth
+}
+
+func (value *MetricValue) listCollect(atTime time.Time, stepTime time.Duration, need int) []float64 {
 	var values []float64
 	level := 0
 	index := 0
 
-	var left tv
-	var right tv
+	var left aTV
+	var right aTV
 	used := false
 
 	for need > 0 && level < len(value.lineLevels) {
@@ -47,7 +53,7 @@ func (value *MetricValue) getList(atTime time.Time, stepTime time.Duration, need
 				right.value = summ / float64(right.factor)
 				leftTo = right.at
 			}
-			left = tv{at: toElm.at, to: leftTo, factor: 1}
+			left = aTV{at: toElm.at, to: leftTo, factor: 1}
 			left.value = value.calculeValue(toElm, leftTo)
 		} else {
 			fVal := 0.0
@@ -71,4 +77,21 @@ func (value *MetricValue) calculeValue(elm *lineValue, to time.Time) float64 {
 	} else {
 		return 0
 	}
+}
+
+func (value *MetricValue) listSmooth(list []float64) []float64 {
+	count := len(list)
+	if count <= 1 {
+		return list
+	}
+
+	smooth := make([]float64, count)
+	alpha := 0.25
+	good := list[count-1]
+	for n := count - 1; n >= 0; n-- {
+		good = alpha*smooth[n] + (1-alpha)*good
+		smooth[n] = good
+	}
+
+	return smooth
 }

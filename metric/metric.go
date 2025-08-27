@@ -157,7 +157,7 @@ func (value *MetricValue) GetListPath(at time.Time, step time.Duration, need int
 	defer value.gate.RUnlock()
 
 	if len(path) == 0 {
-		return value.getList(at, step, need)
+		return value.listGet(at, step, need)
 	} else if elm := value.seekMetric(false, path); elm != nil {
 		return elm.GetListPath(at, step, need, path[1:]...)
 	} else {
