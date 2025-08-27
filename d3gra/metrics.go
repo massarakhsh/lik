@@ -54,9 +54,9 @@ func listSmooth(list []float64) []float64 {
 
 	smooth := make([]float64, count)
 	alpha := 0.25
-	good := list[count-1]
-	for n := count - 1; n >= 0; n-- {
-		good = alpha*smooth[n] + (1-alpha)*good
+	good := list[0]
+	for n := 0; n < count; n++ {
+		good = alpha*list[n] + (1-alpha)*good
 		smooth[n] = good
 	}
 
