@@ -33,14 +33,32 @@ func BuildSeria(metro *metric.MetricValue, to time.Time, step time.Duration, cou
 	seria := lik.BuildSet()
 	data := seria.AddList("data")
 	history := metro.GetListPath(to, step, count)
+	smooth := listSmooth(history)
 	for n := 0; n < count; n++ {
 		ni := count - 1 - n
 		at := to.Add(-time.Duration(ni) * step)
-		if ni >= 0 && ni < len(history) {
+		if ni >= 0 && ni < len(smooth) {
 			elm := data.AddItemSet()
 			elm.SetValue("date", at.UnixMilli())
-			elm.SetValue("value", history[ni])
+			elm.SetValue("value", smooth[ni])
 		}
 	}
 	return seria
+}
+
+func listSmooth(list []float64) []float64 {
+	count := len(list)
+	if count <= 1 {
+		return list
+	}
+
+	smooth := make([]float64, count)
+	alpha := 0.25
+	good := list[count-1]
+	for n := count - 1; n >= 0; n-- {
+		good = alpha*smooth[n] + (1-alpha)*good
+		smooth[n] = good
+	}
+
+	return smooth
 }

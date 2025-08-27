@@ -12,12 +12,6 @@ type aTV struct {
 }
 
 func (value *MetricValue) listGet(atTime time.Time, stepTime time.Duration, need int) []float64 {
-	list := value.listCollect(atTime, stepTime, need)
-	smooth := value.listSmooth(list)
-	return smooth
-}
-
-func (value *MetricValue) listCollect(atTime time.Time, stepTime time.Duration, need int) []float64 {
 	var values []float64
 	level := 0
 	index := 0
@@ -77,21 +71,4 @@ func (value *MetricValue) calculeValue(elm *lineValue, to time.Time) float64 {
 	} else {
 		return 0
 	}
-}
-
-func (value *MetricValue) listSmooth(list []float64) []float64 {
-	count := len(list)
-	if count <= 1 {
-		return list
-	}
-
-	smooth := make([]float64, count)
-	alpha := 0.25
-	good := list[count-1]
-	for n := count - 1; n >= 0; n-- {
-		good = alpha*smooth[n] + (1-alpha)*good
-		smooth[n] = good
-	}
-
-	return smooth
 }
