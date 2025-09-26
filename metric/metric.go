@@ -18,7 +18,7 @@ type MetricValue struct {
 	lastValue float64
 
 	lineLevels []lineLevel
-	listValues []lineValue
+	listValues []lineElm
 
 	elms []metricElm
 }
@@ -28,20 +28,27 @@ type metricElm struct {
 	elm  *MetricValue
 }
 
-const duraStart time.Duration = time.Second
+const maxCalcule MS = 16000
+const duraStart MS = 1000
 const duraSize int = 64
 const duraFactor = 2
-const maxCalcule time.Duration = time.Second * 10
 
 type lineLevel struct {
 	size int
 	pos  int
 }
 
-type lineValue struct {
-	at     time.Time
-	count  int64
-	weight float64
+type lineElm struct {
+	start    MS
+	duration MS
+	count    int64
+	weight   float64
+}
+
+type MS int64
+
+func NowMS() MS {
+	return MS(time.Now().UnixMilli())
 }
 
 func (value *MetricValue) GetLast(name string) float64 {
@@ -83,7 +90,7 @@ func (value *MetricValue) SetPathInt(ival int64, path ...string) {
 	value.gate.Lock()
 	defer value.gate.Unlock()
 
-	value.set(float64(ival), protoValue)
+	value.set(protoValue, float64(ival))
 	if elm := value.seekMetric(true, path); elm != nil {
 		elm.SetPathInt(ival, path[1:]...)
 	}
@@ -97,7 +104,7 @@ func (value *MetricValue) SetPathFloat(fval float64, path ...string) {
 	value.gate.Lock()
 	defer value.gate.Unlock()
 
-	value.set(fval, protoValue)
+	value.set(protoValue, fval)
 	if elm := value.seekMetric(true, path); elm != nil {
 		elm.SetPathFloat(fval, path[1:]...)
 	}
@@ -111,7 +118,7 @@ func (value *MetricValue) IncPath(path ...string) {
 	value.gate.Lock()
 	defer value.gate.Unlock()
 
-	value.set(1, protoFreq)
+	value.set(protoFreq, 1)
 	if elm := value.seekMetric(true, path); elm != nil {
 		elm.IncPath(path[1:]...)
 	}
@@ -125,7 +132,7 @@ func (value *MetricValue) AddPath(fval float64, path ...string) {
 	value.gate.Lock()
 	defer value.gate.Unlock()
 
-	value.set(fval, protoFreq)
+	value.set(protoFreq, fval)
 	if elm := value.seekMetric(true, path); elm != nil {
 		elm.AddPath(fval, path[1:]...)
 	}

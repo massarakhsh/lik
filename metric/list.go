@@ -5,8 +5,7 @@ import (
 )
 
 type aTV struct {
-	at     time.Time
-	to     time.Time
+	at     MS
 	value  float64
 	factor int
 }
@@ -15,13 +14,15 @@ func (value *MetricValue) listGet(atTime time.Time, stepTime time.Duration, need
 	var values []float64
 	level := 0
 	index := 0
+	at := MS(atTime.UnixMilli())
+	step := MS(stepTime.Milliseconds())
 
 	var left aTV
 	var right aTV
 	used := false
 
 	for need > 0 && level < len(value.lineLevels) {
-		if right.factor == 0 || atTime.Before(left.at) {
+		if right.factor == 0 || at < left.at {
 			toLevel := &value.lineLevels[level]
 			if index >= toLevel.size {
 				level++
@@ -31,43 +32,38 @@ func (value *MetricValue) listGet(atTime time.Time, stepTime time.Duration, need
 			pos := (toLevel.pos - index + duraSize) % duraSize
 			toElm := &value.listValues[level*duraSize+pos]
 			index++
-			var leftTo time.Time
 			if left.factor == 0 {
-				leftTo = atTime
 			} else if right.factor == 0 {
 				right = left
-				leftTo = right.at
 			} else if used {
 				right = left
-				leftTo = right.at
 				used = false
 			} else {
 				summ := right.value*float64(right.factor) + left.value
 				right.factor++
 				right.value = summ / float64(right.factor)
-				leftTo = right.at
 			}
-			left = aTV{at: toElm.at, to: leftTo, factor: 1}
-			left.value = value.calculeValue(toElm, leftTo)
+			left = aTV{at: toElm.start, factor: 1}
+			left.value = value.calculeValue(toElm)
 		} else {
 			fVal := 0.0
-			if atTime.Before(right.at) {
-				fVal = (left.value*right.at.Sub(atTime).Seconds() + right.value*atTime.Sub(left.at).Seconds()) / right.at.Sub(left.at).Seconds()
+			if at < right.at {
+				fVal = (left.value*float64(right.at-at) + right.value*float64(at-left.at)) / float64(right.at-left.at)
 				values = append(values, fVal)
 				used = true
 			}
-			atTime = atTime.Add(-stepTime)
+			at -= step
 			need--
 		}
 	}
 	return values
 }
 
-func (value *MetricValue) calculeValue(elm *lineValue, to time.Time) float64 {
+func (value *MetricValue) calculeValue(elm *lineElm) float64 {
 	if value.proto == protoValue && elm.count > 0 {
 		return elm.weight / float64(elm.count)
-	} else if value.proto == protoFreq && to.After(elm.at) {
-		return elm.weight / to.Sub(elm.at).Seconds()
+	} else if value.proto == protoFreq && elm.duration > 0 {
+		return elm.weight / float64(elm.duration) * 1000
 	} else {
 		return 0
 	}

@@ -1,15 +1,13 @@
 package metric
 
-import "time"
-
-func (value *MetricValue) set(fval float64, proto ProtoMetric) {
-	value.lastValue = fval
+func (value *MetricValue) set(proto ProtoMetric, fval float64) {
 	value.proto = proto
+	value.lastValue = fval
 
 	level := 0
-	duraLev := duraStart
-	now := time.Now()
-	addElm := lineValue{at: now, count: 1, weight: fval}
+	duraLevel := duraStart
+	now := NowMS() / duraStart * duraStart
+	addElm := lineElm{start: now, duration: duraStart, count: 1, weight: fval}
 	for {
 		if level >= len(value.lineLevels) {
 			value.lineLevels = append(value.lineLevels, lineLevel{})
@@ -23,9 +21,12 @@ func (value *MetricValue) set(fval float64, proto ProtoMetric) {
 			break
 		}
 		elm := &value.listValues[loc]
-		if addElm.at.Sub(elm.at) <= duraLev {
+		if addElm.start/duraLevel == elm.start/duraLevel {
 			elm.count += addElm.count
 			elm.weight += addElm.weight
+			if level > 0 {
+				elm.duration += addElm.duration
+			}
 			break
 		}
 		pos++
@@ -40,7 +41,7 @@ func (value *MetricValue) set(fval float64, proto ProtoMetric) {
 			*elm = addElm
 			addElm = pushElm
 			level++
-			duraLev *= duraFactor
+			duraLevel *= duraFactor
 		}
 	}
 }
