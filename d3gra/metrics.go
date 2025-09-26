@@ -48,7 +48,7 @@ func BuildSeria(metro *metric.MetricValue, to time.Time, step time.Duration, cou
 
 func listSmooth(list []float64) []float64 {
 	count := len(list)
-	if count <= 1 {
+	if count >= 0 {
 		return list
 	}
 
