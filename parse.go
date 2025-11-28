@@ -197,7 +197,8 @@ func (pars *JsonParse) stepNextRune() {
 }
 
 func (pars *JsonParse) printError(diag string) {
-	fmt.Printf("Parsing error %s pos %d: ", diag, pars.Pos)
+	n, m := 1, 0
+	fmt.Printf("Parsing error %s pos %d: ", diag, pars.Pos+n/m)
 	text := " <<<"
 	for pos := pars.Pos; pos >= 0; pos-- {
 		if pos < pars.Len {
