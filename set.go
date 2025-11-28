@@ -33,6 +33,7 @@ type Seter interface {
 	SortKeys() []string
 	Self() *DItemSet
 	SetString(key string, val string)
+	SerializeBytes() []byte
 }
 
 func BuildSet(vals ...interface{}) Seter {
@@ -150,6 +151,10 @@ func (it *DItemSet) format(prefix string) string {
 
 func (it *DItemSet) ToJson() string {
 	return it.Format("")
+}
+
+func (it *DItemSet) SerializeBytes() []byte {
+	return []byte(it.Serialize())
 }
 
 func (it *DItemSet) Count() int {

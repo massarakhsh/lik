@@ -36,6 +36,10 @@ func ItemFromString(data string) Itemer {
 	return item
 }
 
+func SetFromBytes(code []byte) Seter {
+	return SetFromString(string(code))
+}
+
 func SetFromRequest(data string) Seter {
 	var set Seter
 	data = strings.Trim(data, " \n\r\t\b")
