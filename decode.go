@@ -31,6 +31,9 @@ func SetFromString(data string) Seter {
 
 func ItemFromString(data string) Itemer {
 	str := strings.Trim(data, " \n\r\t\b")
+	if str == "" {
+		return nil
+	}
 	pars := buildParse(str)
 	item := pars.scanValue()
 	return item
