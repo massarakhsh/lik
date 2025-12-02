@@ -296,8 +296,7 @@ func CompareVersion(ver1 string, ver2 string) int {
 	cp := 0
 	for cp == 0 && (ver1 != "" || ver2 != "") {
 		v1 := ""
-		i1 := 0
-		ok1 := false
+		i1 := -1
 		if match := RegExParse(ver1, "^([^\\.]*)\\.(.*)$"); match != nil {
 			v1 = match[1]
 			ver1 = match[2]
@@ -305,13 +304,11 @@ func CompareVersion(ver1 string, ver2 string) int {
 			v1 = ver1
 			ver1 = ""
 		}
-		if match := RegExParse(v1, "^(\\d+)"); match != nil {
+		if match := RegExParse(v1, "(\\d+)"); match != nil {
 			i1 = StrToInt(match[1])
-			ok1 = true
 		}
 		v2 := ""
 		i2 := 0
-		ok2 := false
 		if match := RegExParse(ver2, "^([^\\.]*)\\.(.*)$"); match != nil {
 			v2 = match[1]
 			ver2 = match[2]
@@ -319,19 +316,12 @@ func CompareVersion(ver1 string, ver2 string) int {
 			v2 = ver2
 			ver2 = ""
 		}
-		if match := RegExParse(v2, "^(\\d+)"); match != nil {
+		if match := RegExParse(v2, "(\\d+)"); match != nil {
 			i2 = StrToInt(match[1])
-			ok2 = true
 		}
-		if ok1 && ok2 {
-			if i1 > i2 {
-				cp = 1
-			} else if i1 < i2 {
-				cp = -1
-			}
-		} else if ok1 {
+		if i1 > i2 {
 			cp = 1
-		} else if ok2 {
+		} else if i1 < i2 {
 			cp = -1
 		}
 		if cp == 0 {
