@@ -154,7 +154,7 @@ func (it *DItemSet) ToJson() string {
 }
 
 func (it *DItemSet) SerializeBytes() []byte {
-	return []byte(it.Serialize())
+	return []byte(it.SortSerialize())
 }
 
 func (it *DItemSet) Count() int {
