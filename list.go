@@ -24,6 +24,8 @@ type Lister interface {
 	ToCsv(dlm string) string
 	Values() []Itemer
 	Self() *DItemList
+	ToSliceItems() []Itemer
+	ToSliceSets() []Seter
 }
 
 func BuildList(vals ...interface{}) Lister {
@@ -260,4 +262,26 @@ func (it *DItemList) ToCsv(dlm string) string {
 		}
 	}
 	return dump
+}
+
+func (it *DItemList) ToSliceItems() []Itemer {
+	var items []Itemer
+	ml := it.Count()
+	for nl := 0; nl < ml; nl++ {
+		if item := it.GetItem(nl); item != nil {
+			items = append(items, item)
+		}
+	}
+	return items
+}
+
+func (it *DItemList) ToSliceSets() []Seter {
+	var sets []Seter
+	ml := it.Count()
+	for nl := 0; nl < ml; nl++ {
+		if set := it.GetSet(nl); set != nil {
+			sets = append(sets, set)
+		}
+	}
+	return sets
 }

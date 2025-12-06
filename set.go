@@ -34,6 +34,8 @@ type Seter interface {
 	Self() *DItemSet
 	SetString(key string, val string)
 	SerializeBytes() []byte
+	ToMapItems() map[string]Itemer
+	ToMapStrings() map[string]string
 }
 
 func BuildSet(vals ...interface{}) Seter {
@@ -379,6 +381,26 @@ func (it *DItemSet) Merge(set Seter) {
 			}
 		}
 	}
+}
+
+func (it *DItemSet) ToMapItems() map[string]Itemer {
+	items := make(map[string]Itemer)
+	for ns := 0; ns < len(it.Val); ns++ {
+		key := it.Val[ns].Key
+		val := it.Val[ns].Val
+		items[key] = val
+	}
+	return items
+}
+
+func (it *DItemSet) ToMapStrings() map[string]string {
+	strs := make(map[string]string)
+	for ns := 0; ns < len(it.Val); ns++ {
+		key := it.Val[ns].Key
+		val := it.Val[ns].Val
+		strs[key] = val.ToString()
+	}
+	return strs
 }
 
 func (it *DItemSet) setFromReflectStructure(tp reflect.Type, vl reflect.Value) {
