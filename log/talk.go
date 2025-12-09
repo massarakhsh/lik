@@ -36,6 +36,7 @@ func (talk *Talk) ErrorOn(key string, dura time.Duration) bool {
 	er := talk.errAll[key]
 	if er == nil {
 		er = &talkErr{key: key}
+		talk.errAll[key] = er
 	}
 	if er.isOn() {
 		return false
