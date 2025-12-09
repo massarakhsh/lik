@@ -63,6 +63,7 @@ func (talk *Talk) control() {
 		talk.initialized = true
 	} else if time.Since(talk.lastClear) > periodClear {
 		talk.clear()
+		talk.lastClear = time.Now()
 	}
 }
 
@@ -72,7 +73,6 @@ func (talk *Talk) clear() {
 			delete(talk.errAll, er.key)
 		}
 	}
-	talk.lastClear = time.Now()
 }
 
 func (er *talkErr) isOn() bool {
