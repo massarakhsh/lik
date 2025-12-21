@@ -16,6 +16,8 @@ type JsonParse struct {
 	Len    int
 }
 
+var LikDebug = false
+
 func buildParse(data string) *JsonParse {
 	parse := JsonParse{}
 	parse.Source = []rune(data)
@@ -197,16 +199,17 @@ func (pars *JsonParse) stepNextRune() {
 }
 
 func (pars *JsonParse) printError(diag string) {
+	if !LikDebug {
+		return
+	}
 	fmt.Printf("Parsing error %s pos %d: ", diag, pars.Pos)
-	text := " <<>> "
+	text := ""
 	for dep := -20; dep < 20; dep++ {
+		if dep == 0 {
+			text += " <<>> "
+		}
 		if pos := pars.Pos + dep; pos >= 0 && pos < pars.Len {
-			ch := string(pars.Source[pos])
-			if dep < 0 {
-				text = ch + text
-			} else {
-				text = text + ch
-			}
+			text += string(pars.Source[pos])
 		}
 	}
 	fmt.Printf("%s\n", text)
