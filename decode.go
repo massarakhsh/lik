@@ -36,6 +36,9 @@ func ItemFromString(data string) Itemer {
 	}
 	pars := buildParse(str)
 	item := pars.scanValue()
+	if pars.stoped {
+		return nil
+	}
 	return item
 }
 

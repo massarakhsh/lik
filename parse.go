@@ -5,37 +5,36 @@ import (
 	"strings"
 )
 
-const (
-	Dbg  = false
-	ZERO = '\x00'
-)
+const ZERO = '\x00'
 
-type JsonParse struct {
+type ParseJson struct {
 	Source []rune
 	Pos    int
 	Len    int
+	stoped bool
 }
 
 var DebugPrint = false
 var DebugDiagnos = ""
 
-func buildParse(data string) *JsonParse {
-	parse := JsonParse{}
+func buildParse(data string) *ParseJson {
+	parse := &ParseJson{}
 	parse.Source = []rune(data)
 	parse.Len = len(parse.Source)
-	return &parse
+	return parse
 }
 
-func (pars *JsonParse) scanValue() Itemer {
+func (pars *ParseJson) scanValue() Itemer {
 	ch := pars.getNextRune()
-	if ch == '{' {
+	switch ch {
+	case '{':
 		return pars.scanMap()
-	} else if ch == '[' {
+	case '[':
 		return pars.scanList()
-	} else if ch == '"' || ch == '\'' {
+	case '"', '\'':
 		str := pars.scanString()
 		return &DItemString{str}
-	} else {
+	default:
 		str := pars.scanImmediate()
 		if lstr := strings.ToLower(str); lstr == "true" {
 			return &DItemBool{true}
@@ -54,10 +53,7 @@ func (pars *JsonParse) scanValue() Itemer {
 	}
 }
 
-func (pars *JsonParse) scanMap() Seter {
-	if Dbg {
-		fmt.Printf("scanItMap: %d\n", pars.Pos)
-	}
+func (pars *ParseJson) scanMap() Seter {
 	info := BuildSet()
 	if pars.getNextRune() != '{' {
 		pars.printError("need '{'")
@@ -65,6 +61,9 @@ func (pars *JsonParse) scanMap() Seter {
 	}
 	pars.stepNextRune()
 	for {
+		if pars.stoped {
+			return nil
+		}
 		ch := pars.getNextRune()
 		if ch == ZERO || ch == '}' {
 			break
@@ -100,10 +99,13 @@ func (pars *JsonParse) scanMap() Seter {
 		return nil
 	}
 	pars.stepNextRune()
+	if pars.stoped {
+		return nil
+	}
 	return info
 }
 
-func (pars *JsonParse) scanList() Lister {
+func (pars *ParseJson) scanList() Lister {
 	info := BuildList()
 	if pars.getNextRune() != '[' {
 		pars.printError("need '['")
@@ -111,6 +113,9 @@ func (pars *JsonParse) scanList() Lister {
 	}
 	pars.stepNextRune()
 	for {
+		if pars.stoped {
+			return nil
+		}
 		ch := pars.getNextRune()
 		if ch == ZERO || ch == ']' {
 			break
@@ -131,10 +136,13 @@ func (pars *JsonParse) scanList() Lister {
 		return nil
 	}
 	pars.stepNextRune()
+	if pars.stoped {
+		return nil
+	}
 	return info
 }
 
-func (pars *JsonParse) scanString() string {
+func (pars *ParseJson) scanString() string {
 	info := ""
 	chg := pars.getNextRune()
 	pars.stepNextRune()
@@ -148,7 +156,7 @@ func (pars *JsonParse) scanString() string {
 			pars.Pos++
 			if pars.Pos >= pars.Len {
 				pars.printError("need symbol")
-				break
+				return ""
 			}
 			chn := pars.Source[pars.Pos]
 			if chn == 'r' {
@@ -168,9 +176,9 @@ func (pars *JsonParse) scanString() string {
 	return info
 }
 
-func (pars *JsonParse) scanImmediate() string {
+func (pars *ParseJson) scanImmediate() string {
 	info := ""
-	for ; pars.Pos < pars.Len; pars.Pos++ {
+	for ; pars.Pos < pars.Len && !pars.stoped; pars.Pos++ {
 		ch := pars.Source[pars.Pos]
 		if ch == ZERO || ch == ' ' || ch < 0x20 || ch == ',' || ch == ':' || ch == '=' || ch == '}' || ch == ']' {
 			break
@@ -180,10 +188,7 @@ func (pars *JsonParse) scanImmediate() string {
 	return info
 }
 
-func (pars *JsonParse) getNextRune() rune {
-	if Dbg {
-		fmt.Printf("getNextRune: %d\n", pars.Pos)
-	}
+func (pars *ParseJson) getNextRune() rune {
 	for ; pars.Pos < pars.Len; pars.Pos++ {
 		ch := pars.Source[pars.Pos]
 		if ch != ZERO && ch != ' ' && ch != '\t' && ch != '\n' && ch != '\r' {
@@ -193,13 +198,13 @@ func (pars *JsonParse) getNextRune() rune {
 	return ZERO
 }
 
-func (pars *JsonParse) stepNextRune() {
+func (pars *ParseJson) stepNextRune() {
 	if pars.Pos < pars.Len {
 		pars.Pos++
 	}
 }
 
-func (pars *JsonParse) printError(diag string) {
+func (pars *ParseJson) printError(diag string) {
 	text := fmt.Sprintf("Parsing error %s pos %d: ", diag, pars.Pos)
 	for dep := -20; dep < 20; dep++ {
 		if dep == 0 {
@@ -213,4 +218,5 @@ func (pars *JsonParse) printError(diag string) {
 	if DebugPrint {
 		fmt.Printf("%s\n", text)
 	}
+	pars.stoped = true
 }
