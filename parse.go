@@ -80,13 +80,14 @@ func (pars *ParseJson) scanMap() Seter {
 		ch = pars.getNextRune()
 		if ch != ':' {
 			pars.printError("need `:`")
-			break
+			return nil
 		}
 		pars.stepNextRune()
 		item := pars.scanValue()
-		if item != nil {
-			info.SetValue(key, item)
+		if item == nil {
+			return nil
 		}
+		info.SetValue(key, item)
 		ch = pars.getNextRune()
 		if ch == ',' {
 			pars.stepNextRune()
