@@ -13,7 +13,6 @@ type Lister interface {
 	GetString(idx int) string
 	GetList(idx int) Lister
 	GetSet(idx int) Seter
-	GetIDB(idx int) IDB
 	AddItems(vals ...interface{})
 	AddItemers(vals []Itemer)
 	InsertItem(val interface{}, idx int)
@@ -137,10 +136,6 @@ func (it *DItemList) GetString(idx int) string {
 		return item.ToString()
 	}
 	return ""
-}
-
-func (it *DItemList) GetIDB(idx int) IDB {
-	return IDB(it.GetInt(idx))
 }
 
 func (it *DItemList) GetList(idx int) Lister {

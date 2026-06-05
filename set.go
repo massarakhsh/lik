@@ -19,7 +19,6 @@ type Seter interface {
 	GetString(path string) string
 	GetList(path string) Lister
 	GetSet(path string) Seter
-	GetIDB(path string) IDB
 	DelItem(path string) bool
 	SetValue(path string, val interface{}) bool
 	SetValues(vals ...interface{})
@@ -215,10 +214,6 @@ func (it *DItemSet) GetInt(path string) int64 {
 		return item.ToInt()
 	}
 	return 0
-}
-
-func (it *DItemSet) GetIDB(path string) IDB {
-	return IDB(it.GetInt(path))
 }
 
 func (it *DItemSet) GetFloat(path string) float64 {

@@ -80,6 +80,7 @@ func (count *Count) prepare(frequency bool) {
 	if count.size == 0 {
 		count.at = now
 		count.size = 1
+		count.line[0] = countElm{}
 	}
 	delta := now - count.at
 	if delta < 0 {

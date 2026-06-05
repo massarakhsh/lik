@@ -78,15 +78,8 @@ func StrToInt64(str string) int64 {
 	return 0
 }
 
-func StrToIDB(str string) IDB {
-	return IDB(StrToInt(str))
-}
-
 func IntToStr(val int) string {
 	return fmt.Sprint(val)
-}
-func IDBToStr(val IDB) string {
-	return fmt.Sprint(int(val))
 }
 
 func StrToFloatIf(str string) (float64, bool) {
@@ -132,9 +125,6 @@ func StringFromXS(data string) string {
 }
 func IntFromXS(data string) int {
 	return StrToInt(StringFromXS(data))
-}
-func IDBFromXS(data string) IDB {
-	return IDB(IntFromXS(data))
 }
 
 func BytesFromXS(data string) []byte {
@@ -183,30 +173,7 @@ func BytesToXS(data []byte) string {
 	return text
 }
 
-func IntToMoney(val int) string {
-	isneg := (val < 0)
-	if isneg {
-		val = -val
-	}
-	data := ""
-	for ndg := 0; val > 0; ndg++ {
-		if ndg > 0 && ndg%3 == 0 {
-			data = " " + data
-		}
-		data = fmt.Sprintf("%d%s", val%10, data)
-		val /= 10
-	}
-	if isneg {
-		data = "-" + data
-	}
-	return data
-}
-
-func IsIt(a string, b string) bool {
-	return strings.ToLower(a) == strings.ToLower(b)
-}
-
-func LimitString(text string, size int) string {
+func LimitRunes(text string, size int) string {
 	if size >= 3 {
 		runes := []rune(text)
 		if real := len(runes); real > size {
@@ -218,12 +185,12 @@ func LimitString(text string, size int) string {
 	return text
 }
 
-func LengthString(text string) int {
+func LengthRunes(text string) int {
 	runes := []rune(text)
 	return len(runes)
 }
 
-func SubString(text string, pos int, size int) string {
+func SubRunes(text string, pos int, size int) string {
 	result := ""
 	runes := []rune(text)
 	total := len(runes)
@@ -426,12 +393,4 @@ func TransliterateMap(text string, translitMap map[rune]string) string {
 		}
 	}
 	return result
-}
-
-func IfString(cond bool, yes string, no string) string {
-	if cond {
-		return yes
-	} else {
-		return no
-	}
 }

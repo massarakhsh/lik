@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-type IDB int
-
 // Базовый интерфейс динамических элементов
 type Itemer interface {
 	IsBool() bool
