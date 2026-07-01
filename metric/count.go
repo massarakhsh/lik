@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const countSize = 10
+const countSize = 30
 
 type Count struct {
 	gate      sync.Mutex
@@ -59,12 +59,13 @@ func (count *Count) Get() float64 {
 	sum := float64(0)
 	factor := 0.0
 	for i := 1; i < count.size; i++ {
+		weight := float64(countSize - 1 - i)
 		elm := count.line[i]
-		sum += elm.value
+		sum += elm.value * weight
 		if !count.frequency {
-			factor += float64(count.line[i].factor)
+			factor += float64(count.line[i].factor) * weight
 		} else {
-			factor += 1
+			factor += weight
 		}
 	}
 	if factor > 0 {
