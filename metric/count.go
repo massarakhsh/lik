@@ -18,7 +18,7 @@ type Count struct {
 
 type countElm struct {
 	value  float64
-	factor float64
+	factor int64
 }
 
 func (count *Count) Inc() {
@@ -38,8 +38,17 @@ func (count *Count) SetMod(val float64, isFreq bool) {
 	defer count.gate.Unlock()
 
 	count.prepare(isFreq)
-	count.line[0].value += val
-	count.line[0].factor += 1
+	elm := &count.line[0]
+	if count.isFreq {
+		elm.value += val
+	} else if elm.factor == 0 {
+		elm.value = val
+	} else {
+		sum := elm.value * float64(elm.factor)
+		sum += val
+		elm.value = sum / float64(elm.factor+1)
+	}
+	elm.factor++
 	count.lastValue = val
 }
 
@@ -48,25 +57,16 @@ func (count *Count) Get() float64 {
 	defer count.gate.Unlock()
 
 	if count.size <= 1 {
-		elm := count.line[0]
-		if elm.factor > 0 && !count.isFreq {
-			return float64(elm.value) / float64(elm.factor)
-		} else {
-			return float64(elm.value)
-		}
+		return count.line[0].value
 	}
 	count.prepare(count.isFreq)
-	sum := float64(0)
+	sum := 0.0
 	weight := 0.0
 	for i := 1; i < count.size; i++ {
-		factor := float64(count.size - i)
-		elm := count.line[i]
-		val := elm.value
-		if !count.isFreq && elm.factor > 0 {
-			val /= elm.factor
-		}
-		sum += val * factor
-		weight += factor
+		impo := float64(count.size - i)
+		elm := &count.line[i]
+		sum += elm.value * impo
+		weight += impo
 	}
 	if weight > 0 {
 		return sum / weight
@@ -79,9 +79,9 @@ func (count *Count) prepare(isFreq bool) {
 	count.isFreq = isFreq
 	now := time.Now().Unix()
 	if count.size == 0 {
+		count.line[0] = countElm{}
 		count.at = now
 		count.size = 1
-		count.line[0] = countElm{}
 	}
 	delta := now - count.at
 	if delta < 0 {
@@ -95,7 +95,7 @@ func (count *Count) prepare(isFreq bool) {
 			} else if isFreq {
 				count.line[to] = countElm{}
 			} else {
-				count.line[to] = countElm{value: count.lastValue, factor: 1}
+				count.line[to] = countElm{value: count.lastValue}
 			}
 		}
 		count.at = now
