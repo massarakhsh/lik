@@ -5,28 +5,12 @@ import (
 	"strings"
 )
 
-func SetFromFile(filename string) Seter {
-	var set Seter
-	if item := ItemFromFile(filename); item != nil {
-		set = item.ToSet()
-	}
-	return set
-}
-
 func ItemFromFile(filename string) Itemer {
 	var item Itemer
 	if data, err := os.ReadFile(filename); err == nil {
 		item = ItemFromString(string(data))
 	}
 	return item
-}
-
-func SetFromString(data string) Seter {
-	var set Seter
-	if item := ItemFromString(data); item != nil {
-		set = item.ToSet()
-	}
-	return set
 }
 
 func ItemFromString(data string) Itemer {
@@ -40,6 +24,22 @@ func ItemFromString(data string) Itemer {
 		return nil
 	}
 	return item
+}
+
+func SetFromFile(filename string) Seter {
+	var set Seter
+	if item := ItemFromFile(filename); item != nil {
+		set = item.ToSet()
+	}
+	return set
+}
+
+func SetFromString(data string) Seter {
+	var set Seter
+	if item := ItemFromString(data); item != nil {
+		set = item.ToSet()
+	}
+	return set
 }
 
 func SetFromBytes(code []byte) Seter {
@@ -91,4 +91,24 @@ func SetFromMap(data map[string]interface{}) Seter {
 
 func SetFromStruct(data interface{}) Seter {
 	return BuildItem(data).ToSet()
+}
+
+func ListFromFile(filename string) Lister {
+	var list Lister
+	if item := ItemFromFile(filename); item != nil {
+		list = item.ToList()
+	}
+	return list
+}
+
+func ListFromString(data string) Lister {
+	var list Lister
+	if item := ItemFromString(data); item != nil {
+		list = item.ToList()
+	}
+	return list
+}
+
+func ListFromBytes(code []byte) Lister {
+	return ListFromString(string(code))
 }

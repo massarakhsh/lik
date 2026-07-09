@@ -59,7 +59,7 @@ func (count *Count) Get() float64 {
 	sum := float64(0)
 	factor := 0.0
 	for i := 1; i < count.size; i++ {
-		weight := float64(countSize - 1 - i)
+		weight := float64(count.size - i)
 		elm := count.line[i]
 		sum += elm.value * weight
 		if !count.frequency {
