@@ -61,10 +61,11 @@ func (count *Count) Get() float64 {
 	for i := 1; i < count.size; i++ {
 		factor := float64(count.size - i)
 		elm := count.line[i]
+		val := elm.value
 		if !count.isFreq && elm.factor > 0 {
-			factor /= elm.factor
+			val /= elm.factor
 		}
-		sum += elm.value * factor
+		sum += val * factor
 		weight += factor
 	}
 	if weight > 0 {
