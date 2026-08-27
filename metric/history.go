@@ -37,5 +37,6 @@ func (value *MetricValue) historyGet(atTime time.Time, duration time.Duration) [
 		val.Value = value.calculeValue(toElm)
 		values = append(values, val)
 	}
+
 	return values
 }
