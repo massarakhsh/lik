@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const countSize = 30
+const countSize = 15
 
 type Count struct {
 	gate      sync.Mutex

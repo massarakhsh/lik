@@ -48,7 +48,11 @@ func (value *MetricValue) listGet(atTime time.Time, stepTime time.Duration, need
 		} else {
 			fVal := 0.0
 			if at < right.at {
-				fVal = (left.value*float64(right.at-at) + right.value*float64(at-left.at)) / float64(right.at-left.at)
+				if len(values) < duraSize {
+					fVal = right.value
+				} else {
+					fVal = (left.value*float64(right.at-at) + right.value*float64(at-left.at)) / float64(right.at-left.at)
+				}
 				values = append(values, fVal)
 				used = true
 			}
