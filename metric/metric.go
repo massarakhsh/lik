@@ -172,6 +172,19 @@ func (value *MetricValue) GetListPath(at time.Time, step time.Duration, need int
 	}
 }
 
+func (value *MetricValue) GetHistoryPath(at time.Time, duration time.Duration, path ...string) []MetricAt {
+	value.gate.RLock()
+	defer value.gate.RUnlock()
+
+	if len(path) == 0 {
+		return value.historyGet(at, duration)
+	} else if elm := value.seekMetric(false, path); elm != nil {
+		return elm.GetHistoryPath(at, duration, path[1:]...)
+	} else {
+		return nil
+	}
+}
+
 func (value *MetricValue) GetCollect(name string) []string {
 	return value.GetCollectPath(value.nameToPath(name)...)
 }
