@@ -13,7 +13,7 @@ func (value *MetricValue) historyGet(atTime time.Time, duration time.Duration) [
 	var values []MetricAt
 	level := 0
 	index := 0
-	at := MS(atTime.UnixMilli())
+	to := MS(atTime.UnixMilli())
 	from := MS(atTime.Add(-duration).UnixMilli())
 
 	for level < len(value.lineLevels) {
@@ -26,10 +26,10 @@ func (value *MetricValue) historyGet(atTime time.Time, duration time.Duration) [
 		pos := (toLevel.pos - index + duraSize) % duraSize
 		toElm := &value.listValues[level*duraSize+pos]
 		index++
-		if toElm.start > from {
+		if toElm.start+toElm.duration < from {
 			break
 		}
-		if toElm.start+toElm.duration < at {
+		if toElm.start > to {
 			continue
 		}
 		var val MetricAt
