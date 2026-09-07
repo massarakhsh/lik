@@ -9,7 +9,7 @@ type MetricAt struct {
 	Value float64
 }
 
-func (value *MetricValue) historyGet(atTime time.Time, duration time.Duration) []MetricAt {
+func (value *MetricValue) getHistory(atTime time.Time, duration time.Duration) []MetricAt {
 	var values []MetricAt
 	level := 0
 	index := 0

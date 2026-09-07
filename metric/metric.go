@@ -90,7 +90,7 @@ func (value *MetricValue) SetPathInt(ival int64, path ...string) {
 	value.gate.Lock()
 	defer value.gate.Unlock()
 
-	value.set(protoValue, float64(ival))
+	value.setValue(protoValue, float64(ival))
 	if elm := value.seekMetric(true, path); elm != nil {
 		elm.SetPathInt(ival, path[1:]...)
 	}
@@ -104,7 +104,7 @@ func (value *MetricValue) SetPathFloat(fval float64, path ...string) {
 	value.gate.Lock()
 	defer value.gate.Unlock()
 
-	value.set(protoValue, fval)
+	value.setValue(protoValue, fval)
 	if elm := value.seekMetric(true, path); elm != nil {
 		elm.SetPathFloat(fval, path[1:]...)
 	}
@@ -118,7 +118,7 @@ func (value *MetricValue) IncPath(path ...string) {
 	value.gate.Lock()
 	defer value.gate.Unlock()
 
-	value.set(protoFreq, 1)
+	value.setValue(protoFreq, 1)
 	if elm := value.seekMetric(true, path); elm != nil {
 		elm.IncPath(path[1:]...)
 	}
@@ -132,7 +132,7 @@ func (value *MetricValue) AddPath(fval float64, path ...string) {
 	value.gate.Lock()
 	defer value.gate.Unlock()
 
-	value.set(protoFreq, fval)
+	value.setValue(protoFreq, fval)
 	if elm := value.seekMetric(true, path); elm != nil {
 		elm.AddPath(fval, path[1:]...)
 	}
@@ -164,7 +164,7 @@ func (value *MetricValue) GetListPath(at time.Time, step time.Duration, need int
 	defer value.gate.RUnlock()
 
 	if len(path) == 0 {
-		return value.listGet(at, step, need)
+		return value.getList(at, step, need)
 	} else if elm := value.seekMetric(false, path); elm != nil {
 		return elm.GetListPath(at, step, need, path[1:]...)
 	} else {
@@ -177,7 +177,7 @@ func (value *MetricValue) GetHistoryPath(at time.Time, duration time.Duration, p
 	defer value.gate.RUnlock()
 
 	if len(path) == 0 {
-		return value.historyGet(at, duration)
+		return value.getHistory(at, duration)
 	} else if elm := value.seekMetric(false, path); elm != nil {
 		return elm.GetHistoryPath(at, duration, path[1:]...)
 	} else {

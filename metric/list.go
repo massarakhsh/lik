@@ -10,7 +10,7 @@ type aTV struct {
 	factor int
 }
 
-func (value *MetricValue) listGet(atTime time.Time, stepTime time.Duration, need int) []float64 {
+func (value *MetricValue) getList(atTime time.Time, stepTime time.Duration, need int) []float64 {
 	var values []float64
 	level := 0
 	index := 0

@@ -1,6 +1,6 @@
 package metric
 
-func (value *MetricValue) set(proto ProtoMetric, fval float64) {
+func (value *MetricValue) setValue(proto ProtoMetric, fval float64) {
 	value.proto = proto
 	value.lastValue = fval
 
