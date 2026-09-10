@@ -26,17 +26,28 @@ func (value *MetricValue) getHistory(atTime time.Time, duration time.Duration) [
 		pos := (toLevel.pos - index + duraSize) % duraSize
 		toElm := &value.listValues[level*duraSize+pos]
 		index++
-		if toElm.start+toElm.duration < from {
+		if toElm.begin < from {
 			break
 		}
-		if toElm.start > to {
+		if toElm.begin > to {
 			continue
 		}
 		var val MetricAt
-		val.At = time.UnixMilli(int64(toElm.start + toElm.duration/2))
-		val.Value = value.calculeValue(toElm)
+		val.At = time.UnixMilli(int64(toElm.begin))
+		val.Value = value.calculeValue(toElm, to)
 		values = append(values, val)
+		to = toElm.begin
 	}
 
 	return values
+}
+
+func (value *MetricValue) calculeValue(elm *lineElm, to MS) float64 {
+	if value.proto == protoValue && elm.count > 0 {
+		return elm.weight / float64(elm.count)
+	} else if value.proto == protoFreq && elm.begin < to {
+		return elm.weight / float64(to-elm.begin) * 1000
+	} else {
+		return 0
+	}
 }

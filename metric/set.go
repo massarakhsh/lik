@@ -7,7 +7,7 @@ func (value *MetricValue) setValue(proto ProtoMetric, fval float64) {
 	level := 0
 	duraLevel := duraStart
 	now := NowMS() / duraStart * duraStart
-	addElm := lineElm{start: now, duration: duraStart, count: 1, weight: fval}
+	addElm := lineElm{begin: now, count: 1, weight: fval}
 	for {
 		if level >= len(value.lineLevels) {
 			value.lineLevels = append(value.lineLevels, lineLevel{})
@@ -21,12 +21,9 @@ func (value *MetricValue) setValue(proto ProtoMetric, fval float64) {
 			break
 		}
 		elm := &value.listValues[loc]
-		if addElm.start/duraLevel == elm.start/duraLevel {
+		if addElm.begin/duraLevel == elm.begin/duraLevel {
 			elm.count += addElm.count
 			elm.weight += addElm.weight
-			if level > 0 {
-				elm.duration += addElm.duration
-			}
 			break
 		}
 		pos++

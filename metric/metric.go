@@ -39,10 +39,9 @@ type lineLevel struct {
 }
 
 type lineElm struct {
-	start    MS
-	duration MS
-	count    int64
-	weight   float64
+	begin  MS
+	count  int64
+	weight float64
 }
 
 type MS int64
@@ -152,23 +151,6 @@ func (value *MetricValue) GetPath(path ...string) float64 {
 		return elm.GetPath(path[1:]...)
 	} else {
 		return 0
-	}
-}
-
-func (value *MetricValue) GetListValues(name string, at time.Time, step time.Duration, need int) []float64 {
-	return value.GetListPath(at, step, need, value.nameToPath(name)...)
-}
-
-func (value *MetricValue) GetListPath(at time.Time, step time.Duration, need int, path ...string) []float64 {
-	value.gate.RLock()
-	defer value.gate.RUnlock()
-
-	if len(path) == 0 {
-		return value.getList(at, step, need)
-	} else if elm := value.seekMetric(false, path); elm != nil {
-		return elm.GetListPath(at, step, need, path[1:]...)
-	} else {
-		return nil
 	}
 }
 
