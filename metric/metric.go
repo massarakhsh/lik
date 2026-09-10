@@ -28,9 +28,9 @@ type metricElm struct {
 	elm  *MetricValue
 }
 
-const maxCalcule MS = 16000
-const duraStart MS = 1000
-const duraSize int = 64
+const maxCalcule MS = 15000
+const duraStart MS = 5000
+const duraSize int = 16
 const duraFactor = 2
 
 type lineLevel struct {
