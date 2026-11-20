@@ -3,6 +3,7 @@ package metric
 func (value *MetricValue) setValue(proto ProtoMetric, fval float64) {
 	value.proto = proto
 	value.lastValue = fval
+	value.lastTotal += fval
 
 	level := 0
 	duraLevel := duraStart

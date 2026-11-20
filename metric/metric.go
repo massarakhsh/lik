@@ -16,6 +16,7 @@ type MetricValue struct {
 	gate      sync.RWMutex
 	proto     ProtoMetric
 	lastValue float64
+	lastTotal float64
 
 	lineLevels []lineLevel
 	listValues []lineElm
@@ -67,17 +68,20 @@ func (value *MetricValue) GetPathLast(path ...string) float64 {
 	}
 }
 
-func (value *MetricValue) SetLast(name string, fval float64) {
-	value.SetPathLast(fval, value.nameToPath(name)...)
+func (value *MetricValue) GetTotal(name string) float64 {
+	return value.GetPathTotal(value.nameToPath(name)...)
 }
 
-func (value *MetricValue) SetPathLast(fval float64, path ...string) {
-	value.gate.Lock()
-	defer value.gate.Unlock()
+func (value *MetricValue) GetPathTotal(path ...string) float64 {
+	value.gate.RLock()
+	defer value.gate.RUnlock()
 
-	value.lastValue = fval
-	if elm := value.seekMetric(true, path); elm != nil {
-		elm.SetPathLast(fval, path[1:]...)
+	if len(path) == 0 {
+		return value.lastTotal
+	} else if elm := value.seekMetric(false, path); elm != nil {
+		return elm.GetPathTotal(path[1:]...)
+	} else {
+		return 0
 	}
 }
 
