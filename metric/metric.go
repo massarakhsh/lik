@@ -4,6 +4,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/massarakhsh/lik"
 )
 
 type ProtoMetric int
@@ -61,8 +63,8 @@ func (value *MetricValue) GetPathLast(path ...string) float64 {
 
 	if len(path) == 0 {
 		return value.lastValue
-	} else if elm := value.seekMetric(false, path); elm != nil {
-		return elm.GetPathLast(path[1:]...)
+	} else if elm, downPath := value.seekMetric(false, path); elm != nil {
+		return elm.GetPathLast(downPath...)
 	} else {
 		return 0
 	}
@@ -78,8 +80,8 @@ func (value *MetricValue) GetPathTotal(path ...string) float64 {
 
 	if len(path) == 0 {
 		return value.lastTotal
-	} else if elm := value.seekMetric(false, path); elm != nil {
-		return elm.GetPathTotal(path[1:]...)
+	} else if elm, downPath := value.seekMetric(false, path); elm != nil {
+		return elm.GetPathTotal(downPath...)
 	} else {
 		return 0
 	}
@@ -94,8 +96,8 @@ func (value *MetricValue) SetPathInt(ival int64, path ...string) {
 	defer value.gate.Unlock()
 
 	value.setValue(protoValue, float64(ival))
-	if elm := value.seekMetric(true, path); elm != nil {
-		elm.SetPathInt(ival, path[1:]...)
+	if elm, downPath := value.seekMetric(true, path); elm != nil {
+		elm.SetPathInt(ival, downPath...)
 	}
 }
 
@@ -108,8 +110,8 @@ func (value *MetricValue) SetPathFloat(fval float64, path ...string) {
 	defer value.gate.Unlock()
 
 	value.setValue(protoValue, fval)
-	if elm := value.seekMetric(true, path); elm != nil {
-		elm.SetPathFloat(fval, path[1:]...)
+	if elm, downPath := value.seekMetric(true, path); elm != nil {
+		elm.SetPathFloat(fval, downPath...)
 	}
 }
 
@@ -122,8 +124,8 @@ func (value *MetricValue) IncPath(path ...string) {
 	defer value.gate.Unlock()
 
 	value.setValue(protoFreq, 1)
-	if elm := value.seekMetric(true, path); elm != nil {
-		elm.IncPath(path[1:]...)
+	if elm, downPath := value.seekMetric(true, path); elm != nil {
+		elm.IncPath(downPath...)
 	}
 }
 
@@ -136,8 +138,8 @@ func (value *MetricValue) AddPath(fval float64, path ...string) {
 	defer value.gate.Unlock()
 
 	value.setValue(protoFreq, fval)
-	if elm := value.seekMetric(true, path); elm != nil {
-		elm.AddPath(fval, path[1:]...)
+	if elm, downPath := value.seekMetric(true, path); elm != nil {
+		elm.AddPath(fval, downPath...)
 	}
 }
 
@@ -151,8 +153,8 @@ func (value *MetricValue) GetPath(path ...string) float64 {
 
 	if len(path) == 0 {
 		return value.get()
-	} else if elm := value.seekMetric(false, path); elm != nil {
-		return elm.GetPath(path[1:]...)
+	} else if elm, downPath := value.seekMetric(false, path); elm != nil {
+		return elm.GetPath(downPath...)
 	} else {
 		return 0
 	}
@@ -164,8 +166,8 @@ func (value *MetricValue) GetHistoryPath(at time.Time, duration time.Duration, p
 
 	if len(path) == 0 {
 		return value.getHistory(at, duration)
-	} else if elm := value.seekMetric(false, path); elm != nil {
-		return elm.GetHistoryPath(at, duration, path[1:]...)
+	} else if elm, downPath := value.seekMetric(false, path); elm != nil {
+		return elm.GetHistoryPath(at, duration, downPath...)
 	} else {
 		return nil
 	}
@@ -185,8 +187,8 @@ func (value *MetricValue) GetCollectPath(path ...string) []string {
 			collect = append(collect, elm.name)
 		}
 		return collect
-	} else if elm := value.seekMetric(false, path); elm != nil {
-		return elm.GetCollectPath(path[1:]...)
+	} else if elm, downPath := value.seekMetric(false, path); elm != nil {
+		return elm.GetCollectPath(downPath...)
 	} else {
 		return nil
 	}
@@ -206,18 +208,25 @@ func (value *MetricValue) SeekMetric(path ...string) *MetricValue {
 
 	if len(path) == 0 {
 		return value
-	} else if elm := value.seekMetric(false, path); elm != nil {
-		return elm.SeekMetric(path[1:]...)
+	} else if elm, downPath := value.seekMetric(false, path); elm != nil {
+		return elm.SeekMetric(downPath...)
 	} else {
 		return nil
 	}
 }
 
-func (value *MetricValue) seekMetric(create bool, path []string) *MetricValue {
+func (value *MetricValue) seekMetric(create bool, path []string) (*MetricValue, []string) {
 	if len(path) == 0 {
-		return nil
+		return nil, nil
 	}
+	var downPath []string
 	name := path[0]
+	if strings.Contains(name, "/") {
+		fullPath := lik.PathToNames(name)
+		name = fullPath[0]
+		downPath = fullPath[1:]
+	}
+	downPath = append(downPath, path[1:]...)
 
 	var elm *MetricValue
 	max := len(value.elms)
@@ -243,5 +252,5 @@ func (value *MetricValue) seekMetric(create bool, path []string) *MetricValue {
 		value.elms = elms
 	}
 
-	return elm
+	return elm, downPath
 }
